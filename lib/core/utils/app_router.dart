@@ -4,8 +4,13 @@ import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
+import '../../presentation/views/splash/splash_screen.dart';
+import '../../presentation/views/auth/login_screen.dart';
+import '../../presentation/views/auth/register_screen.dart';
+import '../../presentation/views/home/home_screen.dart';
 
 abstract final class AppRoutes {
+  static const String splash        = '/';
   static const String login         = '/login';
   static const String register      = '/register';
   static const String home          = '/home';
@@ -22,46 +27,78 @@ abstract final class AppRoutes {
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
     redirect: (context, state) {
-  
+      final currentPath = state.matchedLocation;
+
+      if (currentPath == AppRoutes.splash) return null;
+
+
       if (authState.isLoading) return null;
 
-      final isLoggedIn = authState.value != null;
-      final isAuthRoute = state.matchedLocation == AppRoutes.login ||
-          state.matchedLocation == AppRoutes.register;
+      final isLoggedIn  = authState.value != null;
+      final isAuthRoute = currentPath == AppRoutes.login ||
+          currentPath == AppRoutes.register;
+
 
       if (!isLoggedIn && !isAuthRoute) return AppRoutes.login;
-      if (isLoggedIn && isAuthRoute)  return AppRoutes.home;
+
+      if (isLoggedIn && currentPath == AppRoutes.login) return AppRoutes.home;
+
       return null;
     },
     routes: [
+      // ── Splash — cold start only ──────────────────────────────
+      GoRoute(
+        path: AppRoutes.splash,
+        name: 'splash',
+        builder: (_, __) => const SplashScreen(),
+      ),
+
+      // ── Auth ──────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (_, __) => const _Placeholder('Login'),
+        builder: (_, __) => const LoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.register,
         name: 'register',
-        builder: (_, __) => const _Placeholder('Register'),
+        builder: (_, __) => const RegisterScreen(),
       ),
 
+      // ── Main App — ShellRoute dengan bottom nav ───────────────
       ShellRoute(
         builder: (context, state, child) => _MainShell(child: child),
         routes: [
-          GoRoute(path: AppRoutes.home,       name: 'home',       builder: (_, __) => const _Placeholder('Home')),
-          GoRoute(path: AppRoutes.explore,    name: 'explore',    builder: (_, __) => const _Placeholder('Explore')),
-          GoRoute(path: AppRoutes.collection, name: 'collection', builder: (_, __) => const _Placeholder('Koleksi')),
-          GoRoute(path: AppRoutes.planner,    name: 'planner',    builder: (_, __) => const _Placeholder('Planner')),
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            builder: (_, __) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.explore,
+            name: 'explore',
+            builder: (_, __) => const _Placeholder('Explore'),
+          ),
+          GoRoute(
+            path: AppRoutes.collection,
+            name: 'collection',
+            builder: (_, __) => const _Placeholder('Koleksi'),
+          ),
+          GoRoute(
+            path: AppRoutes.planner,
+            name: 'planner',
+            builder: (_, __) => const _Placeholder('Planner'),
+          ),
         ],
       ),
 
+      // ── Detail routes ─────────────────────────────────────────
       GoRoute(
         path: AppRoutes.recipeDetail,
         name: 'recipe-detail',
@@ -82,8 +119,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.importPreview,
         name: 'import-preview',
-        builder: (_, state) =>
-            _Placeholder('Preview: ${state.uri.queryParameters['url'] ?? ''}'),
+        builder: (_, state) => _Placeholder(
+            'Preview: ${state.uri.queryParameters['url'] ?? ''}'),
       ),
     ],
   );
