@@ -33,6 +33,7 @@ class AuthRepository {
 
       return cred.user!;
     } on FirebaseAuthException catch (e) {
+      print(e.code);
       throw AuthException(_mapFirebaseError(e.code));
     }
   }
@@ -81,6 +82,7 @@ class AuthRepository {
         'weak-password'          => 'Password terlalu lemah, minimal 6 karakter.',
         'too-many-requests'      => 'Terlalu banyak percobaan. Coba lagi nanti.',
         'network-request-failed' => 'Tidak ada koneksi internet.',
+        'invalid-credential'     => 'Password / Email salah',
         _                        => 'Terjadi kesalahan. Silakan coba lagi.',
       };
 }
