@@ -5,7 +5,6 @@ import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
 
-// Semua route paths
 abstract final class AppRoutes {
   static const String login         = '/login';
   static const String register      = '/register';
@@ -23,13 +22,17 @@ abstract final class AppRoutes {
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.login,
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      final isLoggedIn = authState.valueOrNull != null;
+  
+      if (authState.isLoading) return null;
+
+      final isLoggedIn = authState.value != null;
       final isAuthRoute = state.matchedLocation == AppRoutes.login ||
           state.matchedLocation == AppRoutes.register;
 
@@ -49,7 +52,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const _Placeholder('Register'),
       ),
 
-      // Main shell dengan bottom nav
       ShellRoute(
         builder: (context, state, child) => _MainShell(child: child),
         routes: [
@@ -63,8 +65,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.recipeDetail,
         name: 'recipe-detail',
-        builder: (_, state) => _Placeholder(
-            'Detail: ${state.pathParameters['recipeId']}'),
+        builder: (_, state) =>
+            _Placeholder('Detail: ${state.pathParameters['recipeId']}'),
       ),
       GoRoute(
         path: AppRoutes.addManual,
@@ -74,14 +76,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.editRecipe,
         name: 'edit-recipe',
-        builder: (_, state) => _Placeholder(
-            'Edit: ${state.pathParameters['recipeId']}'),
+        builder: (_, state) =>
+            _Placeholder('Edit: ${state.pathParameters['recipeId']}'),
       ),
       GoRoute(
         path: AppRoutes.importPreview,
         name: 'import-preview',
-        builder: (_, state) => _Placeholder(
-            'Preview: ${state.uri.queryParameters['url'] ?? ''}'),
+        builder: (_, state) =>
+            _Placeholder('Preview: ${state.uri.queryParameters['url'] ?? ''}'),
       ),
     ],
   );
@@ -91,17 +93,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 class _MainShell extends StatefulWidget {
   final Widget child;
   const _MainShell({required this.child});
-  @override State<_MainShell> createState() => _MainShellState();
+
+  @override
+  State<_MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<_MainShell> {
   int _index = 0;
 
   static const _tabs = [
-    (label: AppStrings.home,       icon: Icons.home_outlined,            active: Icons.home,             path: AppRoutes.home),
-    (label: AppStrings.explore,    icon: Icons.search_outlined,           active: Icons.search,           path: AppRoutes.explore),
-    (label: AppStrings.collection, icon: Icons.bookmark_border_outlined,  active: Icons.bookmark,         path: AppRoutes.collection),
-    (label: AppStrings.planner,    icon: Icons.calendar_month_outlined,   active: Icons.calendar_month,   path: AppRoutes.planner),
+    (label: AppStrings.home,       icon: Icons.home_outlined,           active: Icons.home,           path: AppRoutes.home),
+    (label: AppStrings.explore,    icon: Icons.search_outlined,          active: Icons.search,         path: AppRoutes.explore),
+    (label: AppStrings.collection, icon: Icons.bookmark_border_outlined, active: Icons.bookmark,       path: AppRoutes.collection),
+    (label: AppStrings.planner,    icon: Icons.calendar_month_outlined,  active: Icons.calendar_month, path: AppRoutes.planner),
   ];
 
   @override
@@ -111,35 +115,52 @@ class _MainShellState extends State<_MainShell> {
           decoration: const BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 10, offset: Offset(0, -2))],
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
           ),
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
             child: BottomNavigationBar(
               currentIndex: _index,
-              onTap: (i) { setState(() => _index = i); context.go(_tabs[i].path); },
-              items: _tabs.map((t) => BottomNavigationBarItem(
-                icon: Icon(t.icon), activeIcon: Icon(t.active), label: t.label,
-              )).toList(),
+              onTap: (i) {
+                setState(() => _index = i);
+                context.go(_tabs[i].path);
+              },
+              items: _tabs
+                  .map((t) => BottomNavigationBarItem(
+                        icon: Icon(t.icon),
+                        activeIcon: Icon(t.active),
+                        label: t.label,
+                      ))
+                  .toList(),
             ),
           ),
         ),
       );
 }
 
-// Placeholder sementara selama dev
 class _Placeholder extends StatelessWidget {
   final String title;
   const _Placeholder(this.title);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: Text(title)),
         body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Icon(Icons.construction, size: 64, color: AppColors.primary),
-            const SizedBox(height: 12),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall),
-          ]),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.construction, size: 64, color: AppColors.primary),
+              const SizedBox(height: 12),
+              Text(title, style: Theme.of(context).textTheme.headlineSmall),
+            ],
+          ),
         ),
       );
 }
