@@ -46,7 +46,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
         },
         onImportLink: () {
           Navigator.pop(context);
-          // TODO: import from link
+          context.push(AppRoutes.importUrl);
         },
         onCancel: () => Navigator.pop(context),
       ),

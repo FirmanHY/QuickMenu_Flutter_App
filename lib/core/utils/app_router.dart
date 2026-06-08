@@ -1,3 +1,4 @@
+// lib/core/utils/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,8 @@ import '../../presentation/views/auth/register_screen.dart';
 import '../../presentation/views/home/home_screen.dart';
 import '../../presentation/views/collection/collection_screen.dart';
 import '../../presentation/views/recipe/add_recipe_manual_screen.dart';
+import '../../presentation/views/recipe/import_url_screen.dart';
+import '../../presentation/views/recipe/import_preview_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -19,12 +22,14 @@ abstract final class AppRoutes {
   static const String explore = '/explore';
   static const String collection = '/collection';
   static const String planner = '/planner';
-  static const String recipeDetail = '/recipe/:recipeId';
+
+  static const String recipeDetail = '/recipe/detail/:recipeId';
   static const String addManual = '/recipe/add/manual';
   static const String editRecipe = '/recipe/edit/:recipeId';
+  static const String importUrl = '/recipe/import';
   static const String importPreview = '/recipe/import-preview';
 
-  static String recipeDetailPath(String id) => '/recipe/$id';
+  static String recipeDetailPath(String id) => '/recipe/detail/$id';
   static String editRecipePath(String id) => '/recipe/edit/$id';
 }
 
@@ -52,7 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // ── Splash — cold start only ──────────────────────────────
+      // ── Splash ────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
@@ -98,17 +103,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // ── Detail routes ─────────────────────────────────────────
-      GoRoute(
-        path: AppRoutes.recipeDetail,
-        name: 'recipe-detail',
-        builder: (_, state) =>
-            _Placeholder('Detail: ${state.pathParameters['recipeId']}'),
-      ),
       GoRoute(
         path: AppRoutes.addManual,
         name: 'add-manual',
         builder: (_, _) => const AddRecipeManualScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.importUrl,
+        name: 'import-url',
+        builder: (_, _) => const ImportUrlScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.importPreview,
+        name: 'import-preview',
+        builder: (context, state) {
+          final url = state.extra as String? ?? '';
+          return ImportPreviewScreen(url: url);
+        },
       ),
       GoRoute(
         path: AppRoutes.editRecipe,
@@ -116,11 +127,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state) =>
             _Placeholder('Edit: ${state.pathParameters['recipeId']}'),
       ),
+
       GoRoute(
-        path: AppRoutes.importPreview,
-        name: 'import-preview',
+        path: AppRoutes.recipeDetail,
+        name: 'recipe-detail',
         builder: (_, state) =>
-            _Placeholder('Preview: ${state.uri.queryParameters['url'] ?? ''}'),
+            _Placeholder('Detail: ${state.pathParameters['recipeId']}'),
       ),
     ],
   );
