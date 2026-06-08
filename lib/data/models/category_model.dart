@@ -24,6 +24,10 @@ class CategoryModel {
         userId: map['userId']?.toString(),
       );
 
-  Map<String, dynamic> toMap() =>
-      {'name': name, 'color': color, 'order': order, 'userId': userId};
+  Map<String, dynamic> toMap() => {
+    'name': name,
+    'color': color,
+    'order': order,
+    'userId': userId,
+  };
 }

@@ -6,16 +6,14 @@ class AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseDatabase _db;
 
-
   bool _isRegistering = false;
 
   AuthRepository({FirebaseAuth? auth, FirebaseDatabase? db})
-      : _auth = auth ?? FirebaseAuth.instance,
-        _db = db ?? FirebaseDatabase.instance;
+    : _auth = auth ?? FirebaseAuth.instance,
+      _db = db ?? FirebaseDatabase.instance;
 
-  Stream<User?> get authStateChanges => _auth.authStateChanges().where(
-        (_) => !_isRegistering,
-      );
+  Stream<User?> get authStateChanges =>
+      _auth.authStateChanges().where((_) => !_isRegistering);
 
   User? get currentUser => _auth.currentUser;
 
@@ -39,8 +37,10 @@ class AuthRepository {
   }
 
   Future<void> registerWithEmail(
-      String email, String password, String name) async {
-
+    String email,
+    String password,
+    String name,
+  ) async {
     _isRegistering = true;
     try {
       final cred = await _auth.createUserWithEmailAndPassword(
@@ -59,12 +59,10 @@ class AuthRepository {
 
       await cred.user!.sendEmailVerification();
 
-  
       await _auth.signOut();
     } on FirebaseAuthException catch (e) {
       throw AuthException(_mapFirebaseError(e.code));
     } finally {
-    
       _isRegistering = false;
     }
   }
@@ -74,15 +72,15 @@ class AuthRepository {
   }
 
   String _mapFirebaseError(String code) => switch (code) {
-        'user-not-found'         => 'Email tidak terdaftar.',
-        'wrong-password'         => 'Password salah.',
-        'invalid-email'          => 'Format email tidak valid.',
-        'user-disabled'          => 'Akun ini dinonaktifkan.',
-        'email-already-in-use'   => 'Email sudah digunakan.',
-        'weak-password'          => 'Password terlalu lemah, minimal 6 karakter.',
-        'too-many-requests'      => 'Terlalu banyak percobaan. Coba lagi nanti.',
-        'network-request-failed' => 'Tidak ada koneksi internet.',
-        'invalid-credential'     => 'Password / Email salah',
-        _                        => 'Terjadi kesalahan. Silakan coba lagi.',
-      };
+    'user-not-found' => 'Email tidak terdaftar.',
+    'wrong-password' => 'Password salah.',
+    'invalid-email' => 'Format email tidak valid.',
+    'user-disabled' => 'Akun ini dinonaktifkan.',
+    'email-already-in-use' => 'Email sudah digunakan.',
+    'weak-password' => 'Password terlalu lemah, minimal 6 karakter.',
+    'too-many-requests' => 'Terlalu banyak percobaan. Coba lagi nanti.',
+    'network-request-failed' => 'Tidak ada koneksi internet.',
+    'invalid-credential' => 'Password / Email salah',
+    _ => 'Terjadi kesalahan. Silakan coba lagi.',
+  };
 }

@@ -40,24 +40,26 @@ class ScraperService {
   final Dio _dio;
 
   ScraperService({Dio? dio})
-      : _dio = dio ??
-            Dio(BaseOptions(
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
               baseUrl: AppConfig.scraperBaseUrl,
-              connectTimeout:
-                  Duration(seconds: AppConfig.connectTimeoutSec),
-              receiveTimeout:
-                  Duration(seconds: AppConfig.receiveTimeoutSec),
-            ));
+              connectTimeout: Duration(seconds: AppConfig.connectTimeoutSec),
+              receiveTimeout: Duration(seconds: AppConfig.receiveTimeoutSec),
+            ),
+          );
 
   Future<ScrapedRecipe> scrapeFromUrl(String url) async {
     try {
-      final response = await _dio
-          .post(AppConfig.scraperScrapeEndpoint, data: {'url': url});
+      final response = await _dio.post(
+        AppConfig.scraperScrapeEndpoint,
+        data: {'url': url},
+      );
       final body = response.data as Map<String, dynamic>;
 
       if (body['success'] != true) {
-        throw ScraperException(
-            body['error']?.toString() ?? 'Gagal scraping');
+        throw ScraperException(body['error']?.toString() ?? 'Gagal scraping');
       }
 
       final data = body['data'] as Map<String, dynamic>;
@@ -76,8 +78,8 @@ class ScraperService {
         throw const NetworkException('Koneksi timeout');
       }
       throw ScraperException(
-          e.response?.data?['error']?.toString() ??
-              'Gagal menghubungi scraper');
+        e.response?.data?['error']?.toString() ?? 'Gagal menghubungi scraper',
+      );
     }
   }
 }

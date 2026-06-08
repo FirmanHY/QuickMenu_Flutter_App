@@ -17,12 +17,12 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _nameCtrl            = TextEditingController();
-  final _emailCtrl           = TextEditingController();
-  final _passwordCtrl        = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
   final _confirmPasswordCtrl = TextEditingController();
 
-  bool _showPassword        = false;
+  bool _showPassword = false;
   bool _showConfirmPassword = false;
 
   final _errors = <String, String?>{
@@ -42,7 +42,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   bool _validate() {
-    final nameRegex  = RegExp(r'^[a-zA-Z\s]{3,}$');
+    final nameRegex = RegExp(r'^[a-zA-Z\s]{3,}$');
     final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
 
     String? nameErr, emailErr, passErr, confirmErr;
@@ -72,9 +72,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     setState(() {
-      _errors['name']            = nameErr;
-      _errors['email']           = emailErr;
-      _errors['password']        = passErr;
+      _errors['name'] = nameErr;
+      _errors['email'] = emailErr;
+      _errors['password'] = passErr;
       _errors['confirmPassword'] = confirmErr;
     });
 
@@ -87,7 +87,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _handleRegister() async {
     if (!_validate()) return;
 
-    final success = await ref.read(authViewModelProvider.notifier).register(
+    final success = await ref
+        .read(authViewModelProvider.notifier)
+        .register(
           _emailCtrl.text.trim(),
           _passwordCtrl.text,
           _nameCtrl.text.trim(),
@@ -114,7 +116,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen(authViewModelProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage != prev?.errorMessage) {
+      if (next.errorMessage != null &&
+          next.errorMessage != prev?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -218,7 +221,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
                   onSuffixTap: () => setState(
-                      () => _showConfirmPassword = !_showConfirmPassword),
+                    () => _showConfirmPassword = !_showConfirmPassword,
+                  ),
                   textInputAction: TextInputAction.done,
                   errorText: _errors['confirmPassword'],
                   onChanged: (_) {

@@ -19,12 +19,12 @@ class RecipeState {
   final String selectedCategory;
 
   const RecipeState({
-    this.publicRecipes    = const [],
-    this.userRecipes      = const [],
+    this.publicRecipes = const [],
+    this.userRecipes = const [],
     this.bookmarkedRecipes = const [],
-    this.isLoading        = false,
+    this.isLoading = false,
     this.errorMessage,
-    this.searchQuery      = '',
+    this.searchQuery = '',
     this.selectedCategory = 'Semua',
   });
 
@@ -44,14 +44,18 @@ class RecipeState {
     var list = publicRecipes;
     if (selectedCategory != 'Semua') {
       list = list
-          .where((r) => r.categories.any((c) =>
-              c.toLowerCase() == selectedCategory.toLowerCase()))
+          .where(
+            (r) => r.categories.any(
+              (c) => c.toLowerCase() == selectedCategory.toLowerCase(),
+            ),
+          )
           .toList();
     }
     if (searchQuery.isNotEmpty) {
       list = list
-          .where((r) =>
-              r.title.toLowerCase().contains(searchQuery.toLowerCase()))
+          .where(
+            (r) => r.title.toLowerCase().contains(searchQuery.toLowerCase()),
+          )
           .toList();
     }
     return list;
@@ -62,14 +66,18 @@ class RecipeState {
     var list = allUserRecipes;
     if (selectedCategory != 'Semua') {
       list = list
-          .where((r) => r.categories.any((c) =>
-              c.toLowerCase() == selectedCategory.toLowerCase()))
+          .where(
+            (r) => r.categories.any(
+              (c) => c.toLowerCase() == selectedCategory.toLowerCase(),
+            ),
+          )
           .toList();
     }
     if (searchQuery.isNotEmpty) {
       list = list
-          .where((r) =>
-              r.title.toLowerCase().contains(searchQuery.toLowerCase()))
+          .where(
+            (r) => r.title.toLowerCase().contains(searchQuery.toLowerCase()),
+          )
           .toList();
     }
     return list;
@@ -84,14 +92,14 @@ class RecipeState {
     String? searchQuery,
     String? selectedCategory,
   }) => RecipeState(
-        publicRecipes:    publicRecipes    ?? this.publicRecipes,
-        userRecipes:      userRecipes      ?? this.userRecipes,
-        bookmarkedRecipes: bookmarkedRecipes ?? this.bookmarkedRecipes,
-        isLoading:        isLoading        ?? this.isLoading,
-        errorMessage:     errorMessage,
-        searchQuery:      searchQuery      ?? this.searchQuery,
-        selectedCategory: selectedCategory ?? this.selectedCategory,
-      );
+    publicRecipes: publicRecipes ?? this.publicRecipes,
+    userRecipes: userRecipes ?? this.userRecipes,
+    bookmarkedRecipes: bookmarkedRecipes ?? this.bookmarkedRecipes,
+    isLoading: isLoading ?? this.isLoading,
+    errorMessage: errorMessage,
+    searchQuery: searchQuery ?? this.searchQuery,
+    selectedCategory: selectedCategory ?? this.selectedCategory,
+  );
 }
 
 // ── ViewModel ─────────────────────────────────────────────────
@@ -176,8 +184,7 @@ class RecipeViewModel extends Notifier<RecipeState> {
     }
   }
 
-  void setSearch(String query) =>
-      state = state.copyWith(searchQuery: query);
+  void setSearch(String query) => state = state.copyWith(searchQuery: query);
 
   void setCategory(String category) =>
       state = state.copyWith(selectedCategory: category, searchQuery: '');
@@ -185,5 +192,6 @@ class RecipeViewModel extends Notifier<RecipeState> {
   void clearError() => state = state.copyWith(errorMessage: null);
 }
 
-final recipeViewModelProvider =
-    NotifierProvider<RecipeViewModel, RecipeState>(RecipeViewModel.new);
+final recipeViewModelProvider = NotifierProvider<RecipeViewModel, RecipeState>(
+  RecipeViewModel.new,
+);

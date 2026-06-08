@@ -36,15 +36,14 @@ class HomeState {
     bool? isRefreshing,
     String? errorMessage,
     bool clearError = false,
-  }) =>
-      HomeState(
-        userName: userName ?? this.userName,
-        todayPlan: clearTodayPlan ? null : todayPlan ?? this.todayPlan,
-        healthyRecipes: healthyRecipes ?? this.healthyRecipes,
-        isLoading: isLoading ?? this.isLoading,
-        isRefreshing: isRefreshing ?? this.isRefreshing,
-        errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
-      );
+  }) => HomeState(
+    userName: userName ?? this.userName,
+    todayPlan: clearTodayPlan ? null : todayPlan ?? this.todayPlan,
+    healthyRecipes: healthyRecipes ?? this.healthyRecipes,
+    isLoading: isLoading ?? this.isLoading,
+    isRefreshing: isRefreshing ?? this.isRefreshing,
+    errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+  );
 }
 
 // ── ViewModel ─────────────────────────────────────────────────
@@ -69,14 +68,14 @@ class HomeViewModel extends Notifier<HomeState> {
         _repo.getUserFullName(),
       ]);
 
-      final todayPlan   = results[0] as DailyMealPlanModel?;
-      final recipes     = results[1] as List<RecipeModel>;
-      final fullName    = results[2] as String?;
+      final todayPlan = results[0] as DailyMealPlanModel?;
+      final recipes = results[1] as List<RecipeModel>;
+      final fullName = results[2] as String?;
 
       // Fallback ke displayName dari Firebase Auth
       final authName = ref
-              .read(homeRepositoryProvider)
-              .toString(); // just trigger read
+          .read(homeRepositoryProvider)
+          .toString(); // just trigger read
       final user = FirebaseAuth.instance.currentUser;
       final name = fullName ?? user?.displayName ?? 'Pengguna';
 
@@ -129,5 +128,6 @@ class HomeViewModel extends Notifier<HomeState> {
   void clearError() => state = state.copyWith(clearError: true);
 }
 
-final homeViewModelProvider =
-    NotifierProvider<HomeViewModel, HomeState>(HomeViewModel.new);
+final homeViewModelProvider = NotifierProvider<HomeViewModel, HomeState>(
+  HomeViewModel.new,
+);

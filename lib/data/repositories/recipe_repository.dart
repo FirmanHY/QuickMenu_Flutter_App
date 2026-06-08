@@ -8,8 +8,8 @@ class RecipeRepository {
   final FirebaseAuth _auth;
 
   RecipeRepository({FirebaseDatabase? db, FirebaseAuth? auth})
-      : _db = db ?? FirebaseDatabase.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+    : _db = db ?? FirebaseDatabase.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   String get _uid => _auth.currentUser?.uid ?? '';
 
@@ -20,8 +20,12 @@ class RecipeRepository {
       if (!snap.exists) return [];
       final map = snap.value as Map<dynamic, dynamic>;
       return map.entries
-          .map((e) => RecipeModel.fromMap(e.key.toString(),
-              e.value as Map<dynamic, dynamic>))
+          .map(
+            (e) => RecipeModel.fromMap(
+              e.key.toString(),
+              e.value as Map<dynamic, dynamic>,
+            ),
+          )
           .toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     } catch (e) {
@@ -36,9 +40,12 @@ class RecipeRepository {
       if (!snap.exists) return [];
       final map = snap.value as Map<dynamic, dynamic>;
       return map.entries
-          .map((e) => RecipeModel.fromMap(
-              e.key.toString(), e.value as Map<dynamic, dynamic>)
-            ..toString())
+          .map(
+            (e) => RecipeModel.fromMap(
+              e.key.toString(),
+              e.value as Map<dynamic, dynamic>,
+            )..toString(),
+          )
           .toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     } catch (e) {
@@ -49,8 +56,7 @@ class RecipeRepository {
   // ── Bookmarks ────────────────────────────────────────────────
   Future<List<RecipeModel>> getBookmarkedRecipes() async {
     try {
-      final bookmarkSnap =
-          await _db.ref('user_bookmarks/$_uid').get();
+      final bookmarkSnap = await _db.ref('user_bookmarks/$_uid').get();
       if (!bookmarkSnap.exists) return [];
       final bookmarkMap = bookmarkSnap.value as Map<dynamic, dynamic>;
       final recipeIds = bookmarkMap.keys.map((e) => e.toString()).toList();
@@ -61,9 +67,12 @@ class RecipeRepository {
         var snap = await _db.ref('recipes/$id').get();
         if (!snap.exists) snap = await _db.ref('user_recipes/$_uid/$id').get();
         if (snap.exists) {
-          results.add(RecipeModel.fromMap(
-              id, snap.value as Map<dynamic, dynamic>)
-              .copyWith(isBookmarked: true));
+          results.add(
+            RecipeModel.fromMap(
+              id,
+              snap.value as Map<dynamic, dynamic>,
+            ).copyWith(isBookmarked: true),
+          );
         }
       }
       return results;
@@ -83,21 +92,22 @@ class RecipeRepository {
 
   // ── Single Recipe ────────────────────────────────────────────
   Future<RecipeModel?> getRecipeById(String recipeId) async {
-    final bookmarkSnap =
-        await _db.ref('user_bookmarks/$_uid/$recipeId').get();
+    final bookmarkSnap = await _db.ref('user_bookmarks/$_uid/$recipeId').get();
     final isBookmarked = bookmarkSnap.exists;
 
     var snap = await _db.ref('user_recipes/$_uid/$recipeId').get();
     if (snap.exists) {
       return RecipeModel.fromMap(
-          recipeId, snap.value as Map<dynamic, dynamic>)
-          .copyWith(isBookmarked: isBookmarked);
+        recipeId,
+        snap.value as Map<dynamic, dynamic>,
+      ).copyWith(isBookmarked: isBookmarked);
     }
     snap = await _db.ref('recipes/$recipeId').get();
     if (snap.exists) {
       return RecipeModel.fromMap(
-          recipeId, snap.value as Map<dynamic, dynamic>)
-          .copyWith(isBookmarked: isBookmarked, source: 'QuickMenu');
+        recipeId,
+        snap.value as Map<dynamic, dynamic>,
+      ).copyWith(isBookmarked: isBookmarked, source: 'QuickMenu');
     }
     return null;
   }
@@ -113,8 +123,7 @@ class RecipeRepository {
   }
 
   Future<void> updateRecipe(String recipeId, RecipeModel recipe) async {
-    final data = recipe.toMap()
-      ..['updatedAt'] = ServerValue.timestamp;
+    final data = recipe.toMap()..['updatedAt'] = ServerValue.timestamp;
     await _db.ref('user_recipes/$_uid/$recipeId').update(data);
   }
 

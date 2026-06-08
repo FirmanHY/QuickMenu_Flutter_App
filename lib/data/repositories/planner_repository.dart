@@ -8,13 +8,15 @@ class PlannerRepository {
   final FirebaseAuth _auth;
 
   PlannerRepository({FirebaseDatabase? db, FirebaseAuth? auth})
-      : _db = db ?? FirebaseDatabase.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+    : _db = db ?? FirebaseDatabase.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   String get _uid => _auth.currentUser?.uid ?? '';
 
   Future<List<DailyMealPlanModel>> getWeeklyPlans(
-      String startDate, String endDate) async {
+    String startDate,
+    String endDate,
+  ) async {
     try {
       final snap = await _db.ref('user_meal_plans/$_uid').get();
       if (!snap.exists) return [];
@@ -24,8 +26,10 @@ class PlannerRepository {
             final d = e.key.toString();
             return d.compareTo(startDate) >= 0 && d.compareTo(endDate) <= 0;
           })
-          .map((e) => _parseDay(e.key.toString(),
-              e.value as Map<dynamic, dynamic>))
+          .map(
+            (e) =>
+                _parseDay(e.key.toString(), e.value as Map<dynamic, dynamic>),
+          )
           .toList()
         ..sort((a, b) => a.date.compareTo(b.date));
     } catch (e) {
@@ -33,17 +37,12 @@ class PlannerRepository {
     }
   }
 
-  Future<void> saveMeal(
-      String date, MealType type, MealItemModel meal) async {
-    await _db
-        .ref('user_meal_plans/$_uid/$date/${type.name}')
-        .set(meal.toMap());
+  Future<void> saveMeal(String date, MealType type, MealItemModel meal) async {
+    await _db.ref('user_meal_plans/$_uid/$date/${type.name}').set(meal.toMap());
   }
 
   Future<void> removeMeal(String date, MealType type) async {
-    await _db
-        .ref('user_meal_plans/$_uid/$date/${type.name}')
-        .remove();
+    await _db.ref('user_meal_plans/$_uid/$date/${type.name}').remove();
   }
 
   DailyMealPlanModel _parseDay(String date, Map<dynamic, dynamic> map) {

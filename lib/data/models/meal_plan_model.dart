@@ -1,10 +1,12 @@
 enum MealType {
-  breakfast, lunch, dinner;
+  breakfast,
+  lunch,
+  dinner;
 
   String get label => switch (this) {
     MealType.breakfast => 'Sarapan',
-    MealType.lunch     => 'Makan Siang',
-    MealType.dinner    => 'Makan Malam',
+    MealType.lunch => 'Makan Siang',
+    MealType.dinner => 'Makan Malam',
   };
 }
 
@@ -30,10 +32,10 @@ class MealItemModel {
       );
 
   Map<String, dynamic> toMap() => {
-        'recipeId': recipeId,
-        'title': title,
-        'imageUrl': imageUrl,
-      };
+    'recipeId': recipeId,
+    'title': title,
+    'imageUrl': imageUrl,
+  };
 }
 
 class DailyMealPlanModel {
@@ -51,13 +53,15 @@ class DailyMealPlanModel {
 
   MealItemModel? getMeal(MealType type) => switch (type) {
     MealType.breakfast => breakfast,
-    MealType.lunch     => lunch,
-    MealType.dinner    => dinner,
+    MealType.lunch => lunch,
+    MealType.dinner => dinner,
   };
 
   DailyMealPlanModel copyWith({
-    String? date, MealItemModel? breakfast,
-    MealItemModel? lunch, MealItemModel? dinner,
+    String? date,
+    MealItemModel? breakfast,
+    MealItemModel? lunch,
+    MealItemModel? dinner,
   }) => DailyMealPlanModel(
     date: date ?? this.date,
     breakfast: breakfast ?? this.breakfast,

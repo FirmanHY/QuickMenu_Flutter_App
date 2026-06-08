@@ -33,11 +33,11 @@ class PlannerState {
     bool? isLoading,
     String? errorMessage,
   }) => PlannerState(
-        weeklyPlan: weeklyPlan ?? this.weeklyPlan,
-        currentWeekStart: currentWeekStart ?? this.currentWeekStart,
-        isLoading: isLoading ?? this.isLoading,
-        errorMessage: errorMessage,
-      );
+    weeklyPlan: weeklyPlan ?? this.weeklyPlan,
+    currentWeekStart: currentWeekStart ?? this.currentWeekStart,
+    isLoading: isLoading ?? this.isLoading,
+    errorMessage: errorMessage,
+  );
 }
 
 class PlannerViewModel extends Notifier<PlannerState> {
@@ -67,7 +67,9 @@ class PlannerViewModel extends Notifier<PlannerState> {
       });
 
       final data = await _repo.getWeeklyPlans(
-          _fmt.format(start), _fmt.format(end));
+        _fmt.format(start),
+        _fmt.format(end),
+      );
 
       final merged = skeleton.map((day) {
         final found = data.where((d) => d.date == day.date).firstOrNull;
@@ -82,16 +84,16 @@ class PlannerViewModel extends Notifier<PlannerState> {
 
   void goNextWeek() {
     state = state.copyWith(
-      currentWeekStart:
-          state.currentWeekStart.add(const Duration(days: 7)),
+      currentWeekStart: state.currentWeekStart.add(const Duration(days: 7)),
     );
     loadCurrentWeek();
   }
 
   void goPrevWeek() {
     state = state.copyWith(
-      currentWeekStart:
-          state.currentWeekStart.subtract(const Duration(days: 7)),
+      currentWeekStart: state.currentWeekStart.subtract(
+        const Duration(days: 7),
+      ),
     );
     loadCurrentWeek();
   }
@@ -102,8 +104,8 @@ class PlannerViewModel extends Notifier<PlannerState> {
       if (day.date != date) return day;
       return switch (type) {
         MealType.breakfast => day.copyWith(breakfast: meal),
-        MealType.lunch     => day.copyWith(lunch: meal),
-        MealType.dinner    => day.copyWith(dinner: meal),
+        MealType.lunch => day.copyWith(lunch: meal),
+        MealType.dinner => day.copyWith(dinner: meal),
       };
     }).toList();
     state = state.copyWith(weeklyPlan: newPlan);
@@ -123,11 +125,20 @@ class PlannerViewModel extends Notifier<PlannerState> {
       if (day.date != date) return day;
       return switch (type) {
         MealType.breakfast => DailyMealPlanModel(
-            date: day.date, lunch: day.lunch, dinner: day.dinner),
-        MealType.lunch     => DailyMealPlanModel(
-            date: day.date, breakfast: day.breakfast, dinner: day.dinner),
-        MealType.dinner    => DailyMealPlanModel(
-            date: day.date, breakfast: day.breakfast, lunch: day.lunch),
+          date: day.date,
+          lunch: day.lunch,
+          dinner: day.dinner,
+        ),
+        MealType.lunch => DailyMealPlanModel(
+          date: day.date,
+          breakfast: day.breakfast,
+          dinner: day.dinner,
+        ),
+        MealType.dinner => DailyMealPlanModel(
+          date: day.date,
+          breakfast: day.breakfast,
+          lunch: day.lunch,
+        ),
       };
     }).toList();
     state = state.copyWith(weeklyPlan: newPlan);

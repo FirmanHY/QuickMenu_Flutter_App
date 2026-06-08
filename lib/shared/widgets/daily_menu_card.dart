@@ -35,14 +35,11 @@ class DailyMenuCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Title ─────────────────────────────────────────────
-          Text(
-            'Menu Hari ini ($dayName)',
-            style: AppTextStyles.h4,
-          ),
+          Text('Menu Hari ini ($dayName)', style: AppTextStyles.h4),
           const SizedBox(height: AppDimensions.lg),
 
           // ── Meal rows ─────────────────────────────────────────
-          _MealRow(label: 'Pagi',  value: plan?.breakfast?.title),
+          _MealRow(label: 'Pagi', value: plan?.breakfast?.title),
           const SizedBox(height: AppDimensions.sm),
           _MealRow(label: 'Siang', value: plan?.lunch?.title),
           const SizedBox(height: AppDimensions.sm),
@@ -82,24 +79,19 @@ class _MealRow extends StatelessWidget {
           width: 52,
           child: Text(
             label,
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.gray600,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.gray600),
           ),
         ),
         Text(
           ' : ',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.gray600,
-          ),
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.gray600),
         ),
         Expanded(
           child: Text(
             hasValue ? value! : '-',
             style: AppTextStyles.bodyMedium.copyWith(
               color: hasValue ? AppColors.primary : AppColors.gray400,
-              fontWeight:
-                  hasValue ? FontWeight.w600 : FontWeight.w400,
+              fontWeight: hasValue ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),

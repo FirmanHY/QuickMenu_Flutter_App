@@ -51,12 +51,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   static String _getDayName() {
-    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const days = [
+      'Minggu',
+      'Senin',
+      'Selasa',
+      'Rabu',
+      'Kamis',
+      'Jumat',
+      'Sabtu',
+    ];
     return days[DateTime.now().weekday % 7];
   }
 
   Future<void> _onRefresh() async {
-    await ref.read(homeViewModelProvider.notifier).loadHomeData(isRefresh: true);
+    await ref
+        .read(homeViewModelProvider.notifier)
+        .loadHomeData(isRefresh: true);
   }
 
   @override
@@ -70,10 +80,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           next.errorMessage != prev?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(
-            content: Text(next.errorMessage!),
-            backgroundColor: AppColors.error,
-          ));
+          ..showSnackBar(
+            SnackBar(
+              content: Text(next.errorMessage!),
+              backgroundColor: AppColors.error,
+            ),
+          );
         ref.read(homeViewModelProvider.notifier).clearError();
       }
     });
@@ -146,20 +158,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       height: AppDimensions.inputHeight,
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        borderRadius:
-                            BorderRadius.circular(AppDimensions.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
                         border: Border.all(color: AppColors.inputBorder),
                       ),
                       child: Row(
                         children: [
                           const SizedBox(width: AppDimensions.lg),
-                          const Icon(Icons.search_rounded,
-                              color: AppColors.gray400, size: 20),
+                          const Icon(
+                            Icons.search_rounded,
+                            color: AppColors.gray400,
+                            size: 20,
+                          ),
                           const SizedBox(width: AppDimensions.sm),
                           Text(
                             'Cari resep sehat...',
-                            style: AppTextStyles.bodyMedium
-                                .copyWith(color: AppColors.gray400),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.gray400,
+                            ),
                           ),
                         ],
                       ),
@@ -232,8 +249,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.no_food_rounded,
-                              size: 48, color: AppColors.gray400),
+                          const Icon(
+                            Icons.no_food_rounded,
+                            size: 48,
+                            color: AppColors.gray400,
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             'Belum ada resep sehat.',
@@ -256,7 +276,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         horizontal: AppDimensions.screenHorizontal,
                       ),
                       itemCount: homeState.healthyRecipes.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const SizedBox(width: AppDimensions.md),
                       itemBuilder: (context, index) {
                         final recipe = homeState.healthyRecipes[index];
@@ -307,8 +327,11 @@ class _MenuButton extends ConsumerWidget {
           color: AppColors.gray200,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.menu_rounded,
-            color: AppColors.textPrimary, size: 22),
+        child: const Icon(
+          Icons.menu_rounded,
+          color: AppColors.textPrimary,
+          size: 22,
+        ),
       ),
     );
   }
@@ -337,35 +360,34 @@ class _MenuButton extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // Profil user
-            Consumer(builder: (_, r, __) {
-              final name = r.watch(homeViewModelProvider).userName;
-              final user = r.watch(authStateProvider).value;
-              return Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: AppColors.primaryLight,
-                    child: Text(
-                      name.isNotEmpty ? name[0].toUpperCase() : 'Q',
-                      style: AppTextStyles.h3.copyWith(
-                        color: AppColors.primaryDark,
+            Consumer(
+              builder: (_, r, _) {
+                final name = r.watch(homeViewModelProvider).userName;
+                final user = r.watch(authStateProvider).value;
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: AppColors.primaryLight,
+                      child: Text(
+                        name.isNotEmpty ? name[0].toUpperCase() : 'Q',
+                        style: AppTextStyles.h3.copyWith(
+                          color: AppColors.primaryDark,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(name, style: AppTextStyles.labelLarge),
-                      Text(
-                        user?.email ?? '',
-                        style: AppTextStyles.bodySmall,
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            }),
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name, style: AppTextStyles.labelLarge),
+                        Text(user?.email ?? '', style: AppTextStyles.bodySmall),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
 
             const SizedBox(height: 24),
             const Divider(height: 1),
@@ -381,8 +403,11 @@ class _MenuButton extends ConsumerWidget {
                   color: AppColors.error.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.logout_rounded,
-                    color: AppColors.error, size: 20),
+                child: const Icon(
+                  Icons.logout_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
               ),
               title: Text(
                 'Keluar',
@@ -408,7 +433,8 @@ class _MenuButton extends ConsumerWidget {
                       TextButton(
                         onPressed: () => Navigator.pop(d, true),
                         style: TextButton.styleFrom(
-                            foregroundColor: AppColors.error),
+                          foregroundColor: AppColors.error,
+                        ),
                         child: const Text('Keluar'),
                       ),
                     ],

@@ -62,7 +62,10 @@ class _AppInputState extends State<AppInput> {
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-              border: Border.all(color: _borderColor, width: _isFocused ? 1.5 : 1),
+              border: Border.all(
+                color: _borderColor,
+                width: _isFocused ? 1.5 : 1,
+              ),
             ),
             child: Row(
               children: [

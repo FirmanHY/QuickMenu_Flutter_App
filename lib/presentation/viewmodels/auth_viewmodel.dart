@@ -28,12 +28,11 @@ class AuthState {
     bool? isLoading,
     String? errorMessage,
     bool? registrationSuccess,
-  }) =>
-      AuthState(
-        isLoading: isLoading ?? this.isLoading,
-        errorMessage: errorMessage,           // null = clear error
-        registrationSuccess: registrationSuccess ?? this.registrationSuccess,
-      );
+  }) => AuthState(
+    isLoading: isLoading ?? this.isLoading,
+    errorMessage: errorMessage, // null = clear error
+    registrationSuccess: registrationSuccess ?? this.registrationSuccess,
+  );
 }
 
 // ── ViewModel ─────────────────────────────────────────────────
@@ -56,7 +55,11 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<bool> register(String email, String password, String name) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, registrationSuccess: false);
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+      registrationSuccess: false,
+    );
     try {
       await _repo.registerWithEmail(email.trim(), password, name.trim());
       state = state.copyWith(isLoading: false, registrationSuccess: true);
@@ -75,5 +78,6 @@ class AuthViewModel extends Notifier<AuthState> {
   void clearError() => state = state.copyWith(errorMessage: null);
 }
 
-final authViewModelProvider =
-    NotifierProvider<AuthViewModel, AuthState>(AuthViewModel.new);
+final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(
+  AuthViewModel.new,
+);

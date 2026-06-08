@@ -5,8 +5,8 @@ class RecipeModel {
   final String duration;
   final List<String> categories;
   final String ingredients; // HTML format
-  final String steps;       // HTML format
-  final String source;      // 'QuickMenu' | 'Manual' | 'Instagram' | 'Web'
+  final String steps; // HTML format
+  final String source; // 'QuickMenu' | 'Manual' | 'Instagram' | 'Web'
   final String? originalUrl;
   final String? userId;
   final bool isBookmarked;
@@ -42,8 +42,8 @@ class RecipeModel {
     final cats = raw is List
         ? raw.map((e) => e.toString()).toList()
         : raw is Map
-            ? raw.values.map((e) => e.toString()).toList()
-            : <String>[];
+        ? raw.values.map((e) => e.toString()).toList()
+        : <String>[];
 
     return RecipeModel(
       id: id,
@@ -66,34 +66,50 @@ class RecipeModel {
   }
 
   Map<String, dynamic> toMap() => {
-        'title': title,
-        'imageUrl': imageUrl,
-        'duration': duration,
-        'categories': categories,
-        'ingredients': ingredients,
-        'steps': steps,
-        'source': source,
-        'originalUrl': originalUrl,
-        'userId': userId,
-        'isBookmarked': isBookmarked,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        'imagePublicId': imagePublicId,
-      };
+    'title': title,
+    'imageUrl': imageUrl,
+    'duration': duration,
+    'categories': categories,
+    'ingredients': ingredients,
+    'steps': steps,
+    'source': source,
+    'originalUrl': originalUrl,
+    'userId': userId,
+    'isBookmarked': isBookmarked,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    'imagePublicId': imagePublicId,
+  };
 
   RecipeModel copyWith({
-    String? id, String? title, String? imageUrl, String? duration,
-    List<String>? categories, String? ingredients, String? steps,
-    String? source, String? originalUrl, String? userId,
-    bool? isBookmarked, int? createdAt, int? updatedAt, String? imagePublicId,
+    String? id,
+    String? title,
+    String? imageUrl,
+    String? duration,
+    List<String>? categories,
+    String? ingredients,
+    String? steps,
+    String? source,
+    String? originalUrl,
+    String? userId,
+    bool? isBookmarked,
+    int? createdAt,
+    int? updatedAt,
+    String? imagePublicId,
   }) => RecipeModel(
-    id: id ?? this.id, title: title ?? this.title,
-    imageUrl: imageUrl ?? this.imageUrl, duration: duration ?? this.duration,
+    id: id ?? this.id,
+    title: title ?? this.title,
+    imageUrl: imageUrl ?? this.imageUrl,
+    duration: duration ?? this.duration,
     categories: categories ?? this.categories,
-    ingredients: ingredients ?? this.ingredients, steps: steps ?? this.steps,
-    source: source ?? this.source, originalUrl: originalUrl ?? this.originalUrl,
-    userId: userId ?? this.userId, isBookmarked: isBookmarked ?? this.isBookmarked,
-    createdAt: createdAt ?? this.createdAt, updatedAt: updatedAt ?? this.updatedAt,
+    ingredients: ingredients ?? this.ingredients,
+    steps: steps ?? this.steps,
+    source: source ?? this.source,
+    originalUrl: originalUrl ?? this.originalUrl,
+    userId: userId ?? this.userId,
+    isBookmarked: isBookmarked ?? this.isBookmarked,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
     imagePublicId: imagePublicId ?? this.imagePublicId,
   );
 

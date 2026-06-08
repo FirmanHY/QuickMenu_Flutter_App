@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
-import '../../core/constants/app_dimensions.dart';
 
 enum RecipeCardVariant { large, small }
 
@@ -66,7 +65,7 @@ class RecipeCard extends StatelessWidget {
                       width: double.infinity,
                       height: _isLarge ? 150 : 110,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
+                      placeholder: (_, _) => Container(
                         color: AppColors.gray200,
                         child: const Center(
                           child: CircularProgressIndicator(
@@ -75,7 +74,7 @@ class RecipeCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      errorWidget: (_, __, ___) => Container(
+                      errorWidget: (_, _, _) => Container(
                         color: AppColors.gray200,
                         child: const Icon(
                           Icons.broken_image_outlined,
@@ -117,8 +116,7 @@ class RecipeCard extends StatelessWidget {
 
             // ── Info ─────────────────────────────────────────────
             Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -139,10 +137,7 @@ class RecipeCard extends StatelessWidget {
                         color: AppColors.gray400,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        '$duration Min',
-                        style: AppTextStyles.bodySmall,
-                      ),
+                      Text('$duration Min', style: AppTextStyles.bodySmall),
                     ],
                   ),
                   if (category != null) ...[

@@ -28,9 +28,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       duration: const Duration(milliseconds: 1000),
     );
 
-    _fadeAnim = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeIn),
-    );
+    _fadeAnim = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeIn));
 
     _scaleAnim = Tween<double>(begin: 0.8, end: 1).animate(
       CurvedAnimation(parent: _animController, curve: Curves.elasticOut),
@@ -65,7 +66,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  
       backgroundColor: AppColors.white,
       body: Stack(
         children: [
@@ -78,7 +78,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo image 
+                    // Logo image
                     Image.asset(
                       'assets/images/quick_menu_icon.png',
                       width: 100,

@@ -9,8 +9,8 @@ class HomeRepository {
   final FirebaseAuth _auth;
 
   HomeRepository({FirebaseDatabase? db, FirebaseAuth? auth})
-      : _db = db ?? FirebaseDatabase.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+    : _db = db ?? FirebaseDatabase.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   String get _uid => _auth.currentUser?.uid ?? '';
 
@@ -25,8 +25,7 @@ class HomeRepository {
   /// Ambil menu hari ini dari user_meal_plans
   Future<DailyMealPlanModel?> getTodayMealPlan() async {
     try {
-      final snap =
-          await _db.ref('user_meal_plans/$_uid/$_todayKey').get();
+      final snap = await _db.ref('user_meal_plans/$_uid/$_todayKey').get();
       if (!snap.exists) return null;
 
       final map = snap.value as Map<dynamic, dynamic>;
@@ -57,8 +56,7 @@ class HomeRepository {
       final map = snap.value as Map<dynamic, dynamic>;
 
       // Ambil bookmark set user
-      final bookmarkSnap =
-          await _db.ref('user_bookmarks/$_uid').get();
+      final bookmarkSnap = await _db.ref('user_bookmarks/$_uid').get();
       final bookmarkedIds = <String>{};
       if (bookmarkSnap.exists) {
         final bMap = bookmarkSnap.value as Map<dynamic, dynamic>;
@@ -66,10 +64,13 @@ class HomeRepository {
       }
 
       return map.entries
-          .map((e) => RecipeModel.fromMap(
-              e.key.toString(), e.value as Map<dynamic, dynamic>))
-          .where((r) =>
-              r.categories.any((c) => c.toLowerCase() == 'healthy'))
+          .map(
+            (e) => RecipeModel.fromMap(
+              e.key.toString(),
+              e.value as Map<dynamic, dynamic>,
+            ),
+          )
+          .where((r) => r.categories.any((c) => c.toLowerCase() == 'healthy'))
           .map((r) => r.copyWith(isBookmarked: bookmarkedIds.contains(r.id)))
           .toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

@@ -17,14 +17,11 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailCtrl    = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
-  bool _showPassword  = false;
+  bool _showPassword = false;
 
-  final _errors = <String, String?>{
-    'email': null,
-    'password': null,
-  };
+  final _errors = <String, String?>{'email': null, 'password': null};
 
   @override
   void dispose() {
@@ -48,7 +45,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() {
-      _errors['email']    = emailErr;
+      _errors['email'] = emailErr;
       _errors['password'] = passErr;
     });
 
@@ -58,10 +55,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleLogin() async {
     if (!_validate()) return;
 
-    final success = await ref.read(authViewModelProvider.notifier).login(
-          _emailCtrl.text.trim(),
-          _passwordCtrl.text,
-        );
+    final success = await ref
+        .read(authViewModelProvider.notifier)
+        .login(_emailCtrl.text.trim(), _passwordCtrl.text);
 
     if (!mounted) return;
     if (success) {
@@ -75,7 +71,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // Tampilkan error dari Firebase via SnackBar
     ref.listen(authViewModelProvider, (prev, next) {
-      if (next.errorMessage != null && next.errorMessage != prev?.errorMessage) {
+      if (next.errorMessage != null &&
+          next.errorMessage != prev?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -182,10 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Belum punya akun? ',
-                      style: AppTextStyles.bodyMedium,
-                    ),
+                    Text('Belum punya akun? ', style: AppTextStyles.bodyMedium),
                     GestureDetector(
                       onTap: () => context.push(AppRoutes.register),
                       child: Text(
@@ -215,8 +209,8 @@ class KeyboardDismissOnTap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        behavior: HitTestBehavior.translucent,
-        child: child,
-      );
+    onTap: () => FocusScope.of(context).unfocus(),
+    behavior: HitTestBehavior.translucent,
+    child: child,
+  );
 }

@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 // Dikonversi dari src/utils/responsive.ts (base 375×812)
 class Responsive {
-  static const double _baseWidth  = 375.0;
+  static const double _baseWidth = 375.0;
   static const double _baseHeight = 812.0;
 
   static double _w = _baseWidth;
@@ -14,13 +14,13 @@ class Responsive {
     _h = size.height;
   }
 
-  // Horizontal scale  → hs() 
+  // Horizontal scale  → hs()
   static double hs(double size) => (_w / _baseWidth) * size;
 
-  // Vertical scale    → vs() 
+  // Vertical scale    → vs()
   static double vs(double size) => (_h / _baseHeight) * size;
 
-  // Moderate scale    → ms() 
+  // Moderate scale    → ms()
   static double ms(double size, {double factor = 0.5}) =>
       size + (hs(size) - size) * factor;
 }
