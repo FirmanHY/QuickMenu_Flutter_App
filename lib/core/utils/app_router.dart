@@ -13,6 +13,7 @@ import '../../presentation/views/collection/collection_screen.dart';
 import '../../presentation/views/recipe/add_recipe_manual_screen.dart';
 import '../../presentation/views/recipe/import_url_screen.dart';
 import '../../presentation/views/recipe/import_preview_screen.dart';
+import '../../presentation/views/explore/explore_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -88,7 +89,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.explore,
             name: 'explore',
-            builder: (_, _) => const _Placeholder('Explore'),
+            builder: (_, _) => const ExploreScreen(),
           ),
           GoRoute(
             path: AppRoutes.collection,

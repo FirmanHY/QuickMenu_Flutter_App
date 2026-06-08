@@ -10,6 +10,7 @@ import '../../../presentation/viewmodels/auth_viewmodel.dart';
 import '../../../presentation/viewmodels/home_viewmodel.dart';
 import '../../../shared/widgets/daily_menu_card.dart';
 import '../../../shared/widgets/recipe_card.dart';
+import '../../../shared/widgets/empty_state.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -242,27 +243,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 )
               else if (homeState.healthyRecipes.isEmpty)
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: SizedBox(
                     height: 200,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.no_food_rounded,
-                            size: 48,
-                            color: AppColors.gray400,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Belum ada resep sehat.',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.gray400,
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: EmptyState.section(
+                      message: 'Belum ada resep sehat.',
                     ),
                   ),
                 )
