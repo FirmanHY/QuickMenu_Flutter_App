@@ -92,13 +92,19 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => _AddRecipeBottomSheet(
-        onAddManual: () {
+        onAddManual: () async {
           Navigator.pop(context);
-          context.push(AppRoutes.addManual);
+          await context.push(AppRoutes.addManual);
+          if (mounted) {
+            ref.read(recipeViewModelProvider.notifier).loadUserData();
+          }
         },
-        onImportLink: () {
+        onImportLink: () async {
           Navigator.pop(context);
-          context.push(AppRoutes.importUrl);
+          await context.push(AppRoutes.importUrl);
+          if (mounted) {
+            ref.read(recipeViewModelProvider.notifier).loadUserData();
+          }
         },
         onCancel: () => Navigator.pop(context),
       ),

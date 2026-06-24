@@ -1,6 +1,6 @@
 abstract final class AppConfig {
   // Cloudinary — ganti dengan nilai dashboard kamu
-  static const String cloudinaryCloudName = 'YOUR_CLOUD_NAME';
+  static const String cloudinaryCloudName = 'dhwaur9nl';
   static const String cloudinaryUploadPreset = 'quickmenu_preset';
   static const String cloudinaryFolder = 'user_recipes';
   static const String cloudinaryBaseUrl =
