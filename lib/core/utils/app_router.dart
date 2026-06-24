@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../../presentation/viewmodels/auth_viewmodel.dart';
@@ -14,6 +15,7 @@ import '../../presentation/views/recipe/import_url_screen.dart';
 import '../../presentation/views/recipe/import_preview_screen.dart';
 import '../../presentation/views/explore/explore_screen.dart';
 import '../../presentation/views/recipe/recipe_detail_screen.dart';
+import '../../presentation/views/planner/planner_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -40,11 +42,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
+    observers: [PlannerScreen.routeObserver],
     redirect: (context, state) {
       final currentPath = state.matchedLocation;
 
       if (currentPath == AppRoutes.splash) return null;
-
       if (authState.isLoading) return null;
 
       final isLoggedIn = authState.value != null;
@@ -52,7 +54,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           currentPath == AppRoutes.login || currentPath == AppRoutes.register;
 
       if (!isLoggedIn && !isAuthRoute) return AppRoutes.login;
-
       if (isLoggedIn && currentPath == AppRoutes.login) return AppRoutes.home;
 
       return null;
@@ -96,10 +97,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'collection',
             builder: (_, _) => const CollectionScreen(),
           ),
+          // ✅ Planner sekarang pakai screen asli
           GoRoute(
             path: AppRoutes.planner,
             name: 'planner',
-            builder: (_, _) => const _Placeholder('Planner'),
+            builder: (_, _) => const PlannerScreen(),
           ),
         ],
       ),
@@ -129,7 +131,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             _Placeholder('Edit: ${state.pathParameters['recipeId']}'),
       ),
 
-      // ✅ DIPERBARUI: RecipeDetailScreen menggantikan _Placeholder
+  
       GoRoute(
         path: AppRoutes.recipeDetail,
         name: 'recipe-detail',
@@ -142,7 +144,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
-// ── Bottom Nav Shell ──────────────────────────────────────────
+// ── Bottom Nav Shell ──────────────────────────────────────────────────────────
+
 class _MainShell extends StatefulWidget {
   final Widget child;
   const _MainShell({required this.child});
@@ -183,41 +186,47 @@ class _MainShellState extends State<_MainShell> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: widget.child,
-    bottomNavigationBar: Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 10,
-            offset: Offset(0, -2),
+        body: widget.child,
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: BottomNavigationBar(
-          currentIndex: _index,
-          onTap: (i) {
-            setState(() => _index = i);
-            context.go(_tabs[i].path);
-          },
-          items: _tabs
-              .map(
-                (t) => BottomNavigationBarItem(
-                  icon: Icon(t.icon),
-                  activeIcon: Icon(t.active),
-                  label: t.label,
-                ),
-              )
-              .toList(),
+          child: ClipRRect(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
+            child: BottomNavigationBar(
+              currentIndex: _index,
+              onTap: (i) {
+                setState(() => _index = i);
+                context.go(_tabs[i].path);
+              },
+              items: _tabs
+                  .map(
+                    (t) => BottomNavigationBarItem(
+                      icon: Icon(t.icon),
+                      activeIcon: Icon(t.active),
+                      label: t.label,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Placeholder (untuk layar yang belum dimigrasi)
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _Placeholder extends StatelessWidget {
   final String title;
@@ -225,16 +234,22 @@ class _Placeholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.construction, size: 64, color: AppColors.primary),
-          const SizedBox(height: 12),
-          Text(title, style: Theme.of(context).textTheme.headlineSmall),
-        ],
-      ),
-    ),
-  );
+        appBar: AppBar(title: Text(title)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.construction,
+                size: 64,
+                color: AppColors.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(title,
+                  style: Theme.of(context).textTheme.headlineSmall),
+            ],
+          ),
+        ),
+      );
 }
+
