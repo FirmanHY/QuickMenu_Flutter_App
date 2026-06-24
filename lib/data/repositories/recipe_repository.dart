@@ -44,7 +44,7 @@ class RecipeRepository {
             (e) => RecipeModel.fromMap(
               e.key.toString(),
               e.value as Map<dynamic, dynamic>,
-            )..toString(),
+            ),
           )
           .toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -74,7 +74,6 @@ class RecipeRepository {
 
       final results = <RecipeModel>[];
       for (final id in recipeIds) {
-        // Cek public recipes dulu, lalu user_recipes
         var snap = await _db.ref('recipes/$id').get();
         if (!snap.exists) snap = await _db.ref('user_recipes/$_uid/$id').get();
         if (snap.exists) {
@@ -142,4 +141,23 @@ class RecipeRepository {
     await _db.ref('user_recipes/$_uid/$recipeId').remove();
     await _db.ref('user_bookmarks/$_uid/$recipeId').remove();
   }
+
+
+  Future<void> ensureUserCategory(String uid, String tagName) async {
+    final id = tagName.toLowerCase().replaceAll(RegExp(r'\s+'), '-');
+    final ref = _db.ref('user_categories/$uid/$id');
+    final snap = await ref.get();
+    if (!snap.exists) {
+      await ref.set({
+        'id': id,
+        'name': tagName,
+        'displayName': tagName,
+        'color': '#70B9BE',
+        'isDefault': false,
+        'userId': uid,
+        'createdAt': ServerValue.timestamp,
+      });
+    }
+  }
 }
+

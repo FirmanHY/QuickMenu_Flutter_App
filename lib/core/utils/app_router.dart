@@ -1,4 +1,3 @@
-// lib/core/utils/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +13,7 @@ import '../../presentation/views/recipe/add_recipe_manual_screen.dart';
 import '../../presentation/views/recipe/import_url_screen.dart';
 import '../../presentation/views/recipe/import_preview_screen.dart';
 import '../../presentation/views/explore/explore_screen.dart';
+import '../../presentation/views/recipe/recipe_detail_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -129,11 +129,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             _Placeholder('Edit: ${state.pathParameters['recipeId']}'),
       ),
 
+      // ✅ DIPERBARUI: RecipeDetailScreen menggantikan _Placeholder
       GoRoute(
         path: AppRoutes.recipeDetail,
         name: 'recipe-detail',
-        builder: (_, state) =>
-            _Placeholder('Detail: ${state.pathParameters['recipeId']}'),
+        builder: (_, state) {
+          final recipeId = state.pathParameters['recipeId'] ?? '';
+          return RecipeDetailScreen(recipeId: recipeId);
+        },
       ),
     ],
   );
