@@ -54,6 +54,17 @@ class RecipeRepository {
   }
 
   // ── Bookmarks ────────────────────────────────────────────────
+  Future<Set<String>> getBookmarkedIds() async {
+    try {
+      final snap = await _db.ref('user_bookmarks/$_uid').get();
+      if (!snap.exists) return {};
+      final map = snap.value as Map<dynamic, dynamic>;
+      return map.keys.map((e) => e.toString()).toSet();
+    } catch (e) {
+      throw StorageException('Gagal memuat bookmark: $e');
+    }
+  }
+
   Future<List<RecipeModel>> getBookmarkedRecipes() async {
     try {
       final bookmarkSnap = await _db.ref('user_bookmarks/$_uid').get();

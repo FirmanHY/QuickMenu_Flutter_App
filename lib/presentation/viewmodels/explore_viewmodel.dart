@@ -120,24 +120,22 @@ class ExploreViewModel extends Notifier<ExploreState> {
       final results = await Future.wait([
         _recipeRepo.getPublicRecipes(),
         _categoryRepo.getDefaultCategories(),
+        _recipeRepo.getBookmarkedIds(),
       ]);
 
-      print('Results: $results');
+      final recipes = results[0] as List<RecipeModel>;
+      final bookmarkedIds = results[2] as Set<String>;
 
       state = state.copyWith(
-        allRecipes: results[0] as List<RecipeModel>,
+        allRecipes: recipes
+            .map((r) => r.copyWith(isBookmarked: bookmarkedIds.contains(r.id)))
+            .toList(),
         categories: results[1] as List<CategoryModel>,
         isLoading: false,
       );
     } on AppException catch (e) {
-      print('AppException: ${e.message}');
-      print('StackTrace: $e');
-
       state = state.copyWith(isLoading: false, errorMessage: e.message);
-    } catch (e, stackTrace) {
-      print('Error: $e');
-      print('StackTrace: $stackTrace');
-
+    } catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Gagal memuat data. Coba lagi.',
@@ -153,9 +151,16 @@ class ExploreViewModel extends Notifier<ExploreState> {
       final results = await Future.wait([
         _recipeRepo.getPublicRecipes(),
         _categoryRepo.getDefaultCategories(),
+        _recipeRepo.getBookmarkedIds(),
       ]);
+
+      final recipes = results[0] as List<RecipeModel>;
+      final bookmarkedIds = results[2] as Set<String>;
+
       state = state.copyWith(
-        allRecipes: results[0] as List<RecipeModel>,
+        allRecipes: recipes
+            .map((r) => r.copyWith(isBookmarked: bookmarkedIds.contains(r.id)))
+            .toList(),
         categories: results[1] as List<CategoryModel>,
         isRefreshing: false,
       );

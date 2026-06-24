@@ -123,10 +123,11 @@ class EmptyState extends StatelessWidget {
   /// Usage:
   ///   const EmptyState.section(message: 'Belum ada resep sehat.')
   const EmptyState.section({
-    super.key,
+    Key? key,
     required String message,
     IconData icon = Icons.no_food_rounded,
   }) : this(
+         key: key,
          icon: icon,
          title: message,
          iconContainerSize: 64,
