@@ -2,9 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/utils/app_router.dart';
+import '../../../core/utils/smart_paste_parser.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_input.dart';
 import '../../viewmodels/import_preview_viewmodel.dart';
@@ -119,12 +122,20 @@ class _ImportPreviewScreenState extends ConsumerState<ImportPreviewScreen> {
 
     // ── Error state ──────────────────────────────────────────
     if (state.status == ImportStatus.error && !state.hasData) {
+      final platform = SmartPasteParser.detectPlatform(widget.url);
+      final isUnsupported = platform == 'Instagram' || platform == 'TikTok';
       return _ErrorView(
         message: state.errorMessage ?? 'Terjadi kesalahan',
         url: widget.url,
         onRetry: () => ref
             .read(importPreviewViewModelProvider.notifier)
             .scrapeFromUrl(widget.url),
+        onSmartPaste: isUnsupported
+            ? () => context.pushReplacement(
+                AppRoutes.smartPaste,
+                extra: widget.url,
+              )
+            : null,
       );
     }
 
@@ -183,11 +194,13 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final String url;
   final VoidCallback onRetry;
+  final VoidCallback? onSmartPaste; // ← baru
 
   const _ErrorView({
     required this.message,
     required this.url,
     required this.onRetry,
+    this.onSmartPaste,
   });
 
   @override
@@ -243,6 +256,10 @@ class _ErrorView extends StatelessWidget {
               onPressed: onRetry,
               type: AppButtonType.outline,
             ),
+            if (onSmartPaste != null) ...[
+              const SizedBox(height: AppDimensions.sm),
+              AppButton(title: 'Pakai Smart Paste', onPressed: onSmartPaste!),
+            ],
           ],
         ),
       ),

@@ -136,6 +136,46 @@ class _ImportUrlScreenState extends State<ImportUrlScreen> {
 
               // ── Supported sources info ────────────────────
               _SupportedSourcesInfo(),
+              const SizedBox(height: AppDimensions.lg),
+
+              // ── Smart Paste entry point (US-08) ──────────────────────
+              GestureDetector(
+                onTap: () => context.push(AppRoutes.smartPaste),
+                child: Container(
+                  padding: const EdgeInsets.all(AppDimensions.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.primary.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: AppDimensions.sm),
+                      Expanded(
+                        child: Text(
+                          'Dari Instagram/TikTok? Pakai Smart Paste',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: AppDimensions.xl),
 

@@ -17,6 +17,7 @@ import '../../presentation/views/explore/explore_screen.dart';
 import '../../presentation/views/recipe/recipe_detail_screen.dart';
 import '../../presentation/views/planner/planner_screen.dart';
 import "../../presentation/views/recipe/edit_recipe_screen.dart";
+import '../../presentation/views/recipe/smart_paste_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -32,6 +33,7 @@ abstract final class AppRoutes {
   static const String editRecipe = '/recipe/edit/:recipeId';
   static const String importUrl = '/recipe/import';
   static const String importPreview = '/recipe/import-preview';
+  static const String smartPaste = '/recipe/smart-paste';
 
   static String recipeDetailPath(String id) => '/recipe/detail/$id';
   static String editRecipePath(String id) => '/recipe/edit/$id';
@@ -123,6 +125,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final url = state.extra as String? ?? '';
           return ImportPreviewScreen(url: url);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.smartPaste,
+        name: 'smart-paste',
+        builder: (_, state) {
+          final url = state.extra as String?;
+          return SmartPasteScreen(sourceUrl: url);
         },
       ),
       GoRoute(
