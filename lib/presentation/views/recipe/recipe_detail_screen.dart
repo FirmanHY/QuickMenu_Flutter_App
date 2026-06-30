@@ -58,8 +58,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
   }
 
   void _onOpenEditTag() {
-    final recipe =
-        ref.read(recipeDetailViewModelProvider(widget.recipeId)).recipe;
+    final recipe = ref
+        .read(recipeDetailViewModelProvider(widget.recipeId))
+        .recipe;
     if (recipe == null) return;
 
     EditTagBottomSheet.show(
@@ -164,8 +165,11 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 56, color: AppColors.error),
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 56,
+                color: AppColors.error,
+              ),
               const SizedBox(height: AppDimensions.md),
               Text('Resep tidak ditemukan', style: AppTextStyles.bodyLarge),
               const SizedBox(height: AppDimensions.xl),
@@ -227,7 +231,8 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
                             decoration: BoxDecoration(
                               color: AppColors.gray100,
                               borderRadius: BorderRadius.circular(
-                                  AppDimensions.radiusFull),
+                                AppDimensions.radiusFull,
+                              ),
                             ),
                           ),
                         ),
@@ -357,8 +362,7 @@ class _HeroImage extends StatelessWidget {
                 : 'https://via.placeholder.com/500x300?text=No+Image',
             fit: BoxFit.cover,
             placeholder: (_, _) => Container(color: AppColors.gray200),
-            errorWidget: (_, _, _) =>
-                Container(color: AppColors.gray200),
+            errorWidget: (_, _, _) => Container(color: AppColors.gray200),
           ),
 
           // ── Gradient overlay ─────────────────────────────────────────────
@@ -392,8 +396,8 @@ class _HeroImage extends StatelessWidget {
                 _CircleIconButton(
                   icon: isQuickMenu
                       ? (isBookmarked
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_border_rounded)
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_border_rounded)
                       : Icons.edit_rounded,
                   iconColor: (isQuickMenu && isBookmarked)
                       ? AppColors.primary

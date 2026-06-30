@@ -146,9 +146,7 @@ class _MealRow extends StatelessWidget {
           width: 90,
           child: Text(
             '${type.label}:',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.gray600,
-            ),
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.gray600),
           ),
         ),
         const SizedBox(width: AppDimensions.sm),
@@ -194,8 +192,7 @@ class _FilledSlot extends StatelessWidget {
           children: [
             // Gambar resep
             ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(AppDimensions.radiusSm),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
               child: CachedNetworkImage(
                 imageUrl: meal.imageUrl?.isNotEmpty == true
                     ? meal.imageUrl!
@@ -203,12 +200,15 @@ class _FilledSlot extends StatelessWidget {
                 width: 40,
                 height: 40,
                 fit: BoxFit.cover,
-                errorWidget: (_, __, ___) => Container(
+                errorWidget: (_, _, _) => Container(
                   width: 40,
                   height: 40,
                   color: AppColors.gray200,
-                  child: const Icon(Icons.restaurant_rounded,
-                      size: 20, color: AppColors.gray400),
+                  child: const Icon(
+                    Icons.restaurant_rounded,
+                    size: 20,
+                    color: AppColors.gray400,
+                  ),
                 ),
               ),
             ),
@@ -286,9 +286,7 @@ class _EmptySlot extends StatelessWidget {
             const SizedBox(width: AppDimensions.xs),
             Text(
               'Tambah',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.gray400,
-              ),
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.gray400),
             ),
           ],
         ),

@@ -42,16 +42,16 @@ class RecipeDetailState {
     bool clearError = false,
     String? successMessage,
     bool clearSuccess = false,
-  }) =>
-      RecipeDetailState(
-        recipe: recipe ?? this.recipe,
-        isLoading: isLoading ?? this.isLoading,
-        isSavingSchedule: isSavingSchedule ?? this.isSavingSchedule,
-        isSavingTags: isSavingTags ?? this.isSavingTags,
-        errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-        successMessage:
-            clearSuccess ? null : (successMessage ?? this.successMessage),
-      );
+  }) => RecipeDetailState(
+    recipe: recipe ?? this.recipe,
+    isLoading: isLoading ?? this.isLoading,
+    isSavingSchedule: isSavingSchedule ?? this.isSavingSchedule,
+    isSavingTags: isSavingTags ?? this.isSavingTags,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    successMessage: clearSuccess
+        ? null
+        : (successMessage ?? this.successMessage),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -67,10 +67,10 @@ final plannerRepositoryForDetailProvider = Provider<PlannerRepository>(
 );
 
 // Riverpod 3: NotifierProvider.family — notifier receives arg via constructor
-final recipeDetailViewModelProvider = NotifierProvider.family<
-    RecipeDetailViewModel, RecipeDetailState, String>(
-  (recipeId) => RecipeDetailViewModel(recipeId),
-);
+final recipeDetailViewModelProvider =
+    NotifierProvider.family<RecipeDetailViewModel, RecipeDetailState, String>(
+      (recipeId) => RecipeDetailViewModel(recipeId),
+    );
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ViewModel
@@ -190,10 +190,7 @@ class RecipeDetailViewModel extends Notifier<RecipeDetailState> {
         successMessage: 'Jadwal berhasil disimpan',
       );
     } on AppException catch (e) {
-      state = state.copyWith(
-        isSavingSchedule: false,
-        errorMessage: e.message,
-      );
+      state = state.copyWith(isSavingSchedule: false, errorMessage: e.message);
     } catch (_) {
       state = state.copyWith(
         isSavingSchedule: false,

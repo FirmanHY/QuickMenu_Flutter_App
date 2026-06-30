@@ -26,9 +26,7 @@ class PlannerScreen extends ConsumerStatefulWidget {
   ConsumerState<PlannerScreen> createState() => _PlannerScreenState();
 }
 
-class _PlannerScreenState extends ConsumerState<PlannerScreen>
-    with RouteAware {
-
+class _PlannerScreenState extends ConsumerState<PlannerScreen> with RouteAware {
   // True when the bottom sheet is open — prevents didPopNext from reloading
   // and overwriting the optimistic update from addMeal.
   bool _sheetOpen = false;
@@ -209,9 +207,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen>
           Expanded(
             child: state.isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                    ),
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   )
                 : RefreshIndicator(
                     color: AppColors.primary,

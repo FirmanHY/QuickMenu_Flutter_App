@@ -148,20 +148,25 @@ class _EditTagBottomSheetState extends State<EditTagBottomSheet> {
                       vertical: AppDimensions.md,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusMd),
-                      borderSide:
-                          const BorderSide(color: AppColors.inputBorder),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
+                      borderSide: const BorderSide(
+                        color: AppColors.inputBorder,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusMd),
-                      borderSide:
-                          const BorderSide(color: AppColors.inputBorder),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
+                      borderSide: const BorderSide(
+                        color: AppColors.inputBorder,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
                       borderSide: const BorderSide(
                         color: AppColors.primary,
                         width: 1.5,
@@ -178,13 +183,9 @@ class _EditTagBottomSheetState extends State<EditTagBottomSheet> {
                   width: 52,
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.radiusMd),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
                   ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: AppColors.white,
-                  ),
+                  child: const Icon(Icons.add_rounded, color: AppColors.white),
                 ),
               ),
             ],
@@ -200,13 +201,12 @@ class _EditTagBottomSheetState extends State<EditTagBottomSheet> {
                 return Chip(
                   label: Text(
                     '#$tag',
-                    style: AppTextStyles.labelSmall
-                        .copyWith(color: AppColors.primary),
+                    style: AppTextStyles.labelSmall.copyWith(
+                      color: AppColors.primary,
+                    ),
                   ),
                   backgroundColor: AppColors.primaryLight.withOpacity(0.3),
-                  side: BorderSide(
-                    color: AppColors.primaryLight,
-                  ),
+                  side: BorderSide(color: AppColors.primaryLight),
                   deleteIcon: const Icon(
                     Icons.close_rounded,
                     size: 16,

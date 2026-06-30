@@ -16,6 +16,7 @@ import '../../presentation/views/recipe/import_preview_screen.dart';
 import '../../presentation/views/explore/explore_screen.dart';
 import '../../presentation/views/recipe/recipe_detail_screen.dart';
 import '../../presentation/views/planner/planner_screen.dart';
+import "../../presentation/views/recipe/edit_recipe_screen.dart";
 
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -127,11 +128,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.editRecipe,
         name: 'edit-recipe',
-        builder: (_, state) =>
-            _Placeholder('Edit: ${state.pathParameters['recipeId']}'),
+        builder: (_, state) {
+          final recipeId = state.pathParameters['recipeId'] ?? '';
+          return EditRecipeScreen(recipeId: recipeId);
+        },
       ),
 
-  
       GoRoute(
         path: AppRoutes.recipeDetail,
         name: 'recipe-detail',
@@ -186,42 +188,40 @@ class _MainShellState extends State<_MainShell> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: widget.child,
-        bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius:
-                BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.shadow,
-                blurRadius: 10,
-                offset: Offset(0, -2),
-              ),
-            ],
+    body: widget.child,
+    bottomNavigationBar: Container(
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 10,
+            offset: Offset(0, -2),
           ),
-          child: ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
-            child: BottomNavigationBar(
-              currentIndex: _index,
-              onTap: (i) {
-                setState(() => _index = i);
-                context.go(_tabs[i].path);
-              },
-              items: _tabs
-                  .map(
-                    (t) => BottomNavigationBarItem(
-                      icon: Icon(t.icon),
-                      activeIcon: Icon(t.active),
-                      label: t.label,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: BottomNavigationBar(
+          currentIndex: _index,
+          onTap: (i) {
+            setState(() => _index = i);
+            context.go(_tabs[i].path);
+          },
+          items: _tabs
+              .map(
+                (t) => BottomNavigationBarItem(
+                  icon: Icon(t.icon),
+                  activeIcon: Icon(t.active),
+                  label: t.label,
+                ),
+              )
+              .toList(),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -234,22 +234,16 @@ class _Placeholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.construction,
-                size: 64,
-                color: AppColors.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(title,
-                  style: Theme.of(context).textTheme.headlineSmall),
-            ],
-          ),
-        ),
-      );
+    appBar: AppBar(title: Text(title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.construction, size: 64, color: AppColors.primary),
+          const SizedBox(height: 12),
+          Text(title, style: Theme.of(context).textTheme.headlineSmall),
+        ],
+      ),
+    ),
+  );
 }
-

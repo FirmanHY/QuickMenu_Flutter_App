@@ -48,7 +48,8 @@ class PlannerState {
     final end = currentWeekStart.add(const Duration(days: 6));
     final range = '${currentWeekStart.day} – ${fmt.format(end)}';
     final realMonday = PlannerViewModel._getMonday(DateTime.now());
-    final isThisWeek = DateFormat('yyyy-MM-dd').format(currentWeekStart) ==
+    final isThisWeek =
+        DateFormat('yyyy-MM-dd').format(currentWeekStart) ==
         DateFormat('yyyy-MM-dd').format(realMonday);
     return isThisWeek ? 'Minggu ini ($range)' : range;
   }
@@ -63,18 +64,17 @@ class PlannerState {
     bool clearError = false,
     String? successMessage,
     bool clearSuccess = false,
-  }) =>
-      PlannerState(
-        weeklyPlan: weeklyPlan ?? this.weeklyPlan,
-        currentWeekStart: currentWeekStart ?? this.currentWeekStart,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingCollection:
-            isLoadingCollection ?? this.isLoadingCollection,
-        collectionRecipes: collectionRecipes ?? this.collectionRecipes,
-        errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-        successMessage:
-            clearSuccess ? null : (successMessage ?? this.successMessage),
-      );
+  }) => PlannerState(
+    weeklyPlan: weeklyPlan ?? this.weeklyPlan,
+    currentWeekStart: currentWeekStart ?? this.currentWeekStart,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingCollection: isLoadingCollection ?? this.isLoadingCollection,
+    collectionRecipes: collectionRecipes ?? this.collectionRecipes,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    successMessage: clearSuccess
+        ? null
+        : (successMessage ?? this.successMessage),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -148,14 +148,13 @@ class PlannerViewModel extends Notifier<PlannerState> {
 
       // Gabung + dedup berdasarkan id
       final seen = <String>{};
-      final all = [...userRecipes, ...bookmarked]
-          .where((r) => seen.add(r.id))
-          .toList()
-        ..sort((a, b) {
-          final at = a.updatedAt ?? a.createdAt;
-          final bt = b.updatedAt ?? b.createdAt;
-          return bt.compareTo(at);
-        });
+      final all =
+          [...userRecipes, ...bookmarked].where((r) => seen.add(r.id)).toList()
+            ..sort((a, b) {
+              final at = a.updatedAt ?? a.createdAt;
+              final bt = b.updatedAt ?? b.createdAt;
+              return bt.compareTo(at);
+            });
 
       state = state.copyWith(
         collectionRecipes: all,
@@ -170,27 +169,23 @@ class PlannerViewModel extends Notifier<PlannerState> {
 
   void goNextWeek() {
     state = state.copyWith(
-      currentWeekStart:
-          state.currentWeekStart.add(const Duration(days: 7)),
+      currentWeekStart: state.currentWeekStart.add(const Duration(days: 7)),
     );
     loadCurrentWeek();
   }
 
   void goPrevWeek() {
     state = state.copyWith(
-      currentWeekStart:
-          state.currentWeekStart.subtract(const Duration(days: 7)),
+      currentWeekStart: state.currentWeekStart.subtract(
+        const Duration(days: 7),
+      ),
     );
     loadCurrentWeek();
   }
 
   // ── Tambah Meal (optimistic) ──────────────────────────────────────────────
 
-  Future<void> addMeal(
-    String date,
-    MealType type,
-    MealItemModel meal,
-  ) async {
+  Future<void> addMeal(String date, MealType type, MealItemModel meal) async {
     // Optimistic update
     state = state.copyWith(
       weeklyPlan: state.weeklyPlan.map((day) {
@@ -224,20 +219,20 @@ class PlannerViewModel extends Notifier<PlannerState> {
         if (day.date != date) return day;
         return switch (type) {
           MealType.breakfast => DailyMealPlanModel(
-              date: day.date,
-              lunch: day.lunch,
-              dinner: day.dinner,
-            ),
+            date: day.date,
+            lunch: day.lunch,
+            dinner: day.dinner,
+          ),
           MealType.lunch => DailyMealPlanModel(
-              date: day.date,
-              breakfast: day.breakfast,
-              dinner: day.dinner,
-            ),
+            date: day.date,
+            breakfast: day.breakfast,
+            dinner: day.dinner,
+          ),
           MealType.dinner => DailyMealPlanModel(
-              date: day.date,
-              breakfast: day.breakfast,
-              lunch: day.lunch,
-            ),
+            date: day.date,
+            breakfast: day.breakfast,
+            lunch: day.lunch,
+          ),
         };
       }).toList(),
     );

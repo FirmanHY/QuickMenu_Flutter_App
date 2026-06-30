@@ -51,7 +51,11 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   static const _mealOptions = [
     (type: MealType.breakfast, label: 'Sarapan', icon: Icons.wb_sunny_rounded),
     (type: MealType.lunch, label: 'Makan Siang', icon: Icons.lunch_dining),
-    (type: MealType.dinner, label: 'Makan Malam', icon: Icons.nights_stay_rounded),
+    (
+      type: MealType.dinner,
+      label: 'Makan Malam',
+      icon: Icons.nights_stay_rounded,
+    ),
   ];
 
   @override
@@ -129,10 +133,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
           // ── Title ────────────────────────────────────────────────────────
           Text('Jadwalkan Resep', style: AppTextStyles.h3),
           const SizedBox(height: AppDimensions.xs),
-          Text(
-            'Pilih tanggal dan waktu makan',
-            style: AppTextStyles.bodySmall,
-          ),
+          Text('Pilih tanggal dan waktu makan', style: AppTextStyles.bodySmall),
           const SizedBox(height: AppDimensions.xl),
 
           // ── Date Picker ───────────────────────────────────────────────────
@@ -147,8 +148,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
               ),
               decoration: BoxDecoration(
                 border: Border.all(color: AppColors.inputBorder),
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusMd),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
                 color: AppColors.white,
               ),
               child: Row(
@@ -160,8 +160,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                   ),
                   const SizedBox(width: AppDimensions.md),
                   Text(
-                    DateFormat('EEEE, d MMMM yyyy', 'id_ID')
-                        .format(_selectedDate),
+                    DateFormat(
+                      'EEEE, d MMMM yyyy',
+                      'id_ID',
+                    ).format(_selectedDate),
                     style: AppTextStyles.bodyMedium,
                   ),
                   const Spacer(),
@@ -192,8 +194,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     label: option.label,
                     icon: option.icon,
                     isSelected: isSelected,
-                    onTap: () =>
-                        setState(() => _selectedMeal = option.type),
+                    onTap: () => setState(() => _selectedMeal = option.type),
                   ),
                 ),
               );
@@ -242,8 +243,7 @@ class _MealSlotChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : AppColors.surface,
-          borderRadius:
-              BorderRadius.circular(AppDimensions.radiusMd),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.inputBorder,
           ),

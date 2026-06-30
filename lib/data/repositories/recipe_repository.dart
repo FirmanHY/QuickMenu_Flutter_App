@@ -142,7 +142,6 @@ class RecipeRepository {
     await _db.ref('user_bookmarks/$_uid/$recipeId').remove();
   }
 
-
   Future<void> ensureUserCategory(String uid, String tagName) async {
     final id = tagName.toLowerCase().replaceAll(RegExp(r'\s+'), '-');
     final ref = _db.ref('user_categories/$uid/$id');
@@ -160,4 +159,3 @@ class RecipeRepository {
     }
   }
 }
-

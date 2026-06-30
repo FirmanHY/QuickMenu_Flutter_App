@@ -137,7 +137,7 @@ class RecipeCard extends StatelessWidget {
                         color: AppColors.gray400,
                       ),
                       const SizedBox(width: 4),
-                      Text('$duration Min', style: AppTextStyles.bodySmall),
+                      Text('$duration', style: AppTextStyles.bodySmall),
                     ],
                   ),
                   if (category != null) ...[

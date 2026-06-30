@@ -87,8 +87,7 @@ class _RecipeSelectionSheetState extends State<RecipeSelectionSheet> {
               height: 4,
               decoration: BoxDecoration(
                 color: AppColors.gray100,
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusFull),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
               ),
             ),
           ),
@@ -96,15 +95,10 @@ class _RecipeSelectionSheetState extends State<RecipeSelectionSheet> {
 
           // ── Title ────────────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.xxl,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xxl),
             child: Row(
               children: [
-                Text(
-                  'Pilih Resep dari Koleksi',
-                  style: AppTextStyles.h3,
-                ),
+                Text('Pilih Resep dari Koleksi', style: AppTextStyles.h3),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
@@ -120,9 +114,7 @@ class _RecipeSelectionSheetState extends State<RecipeSelectionSheet> {
 
           // ── Search Bar ───────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.xxl,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.xxl),
             child: TextField(
               controller: _searchCtrl,
               onChanged: (v) => setState(() => _query = v),
@@ -154,20 +146,15 @@ class _RecipeSelectionSheetState extends State<RecipeSelectionSheet> {
                   vertical: AppDimensions.md,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.radiusMd),
-                  borderSide:
-                      const BorderSide(color: AppColors.inputBorder),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.radiusMd),
-                  borderSide:
-                      const BorderSide(color: AppColors.inputBorder),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.radiusMd),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
                   borderSide: const BorderSide(
                     color: AppColors.primary,
                     width: 1.5,
@@ -182,27 +169,24 @@ class _RecipeSelectionSheetState extends State<RecipeSelectionSheet> {
           Expanded(
             child: widget.isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                    ),
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   )
                 : _filtered.isEmpty
-                    ? _EmptyState(hasQuery: _query.isNotEmpty)
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.xxl,
-                        ),
-                        itemCount: _filtered.length,
-                        separatorBuilder: (_, __) =>
-                            const Divider(height: 1),
-                        itemBuilder: (_, i) => _RecipeTile(
-                          recipe: _filtered[i],
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            widget.onSelect(_filtered[i]);
-                          },
-                        ),
-                      ),
+                ? _EmptyState(hasQuery: _query.isNotEmpty)
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.xxl,
+                    ),
+                    itemCount: _filtered.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (_, i) => _RecipeTile(
+                      recipe: _filtered[i],
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        widget.onSelect(_filtered[i]);
+                      },
+                    ),
+                  ),
           ),
           const SizedBox(height: AppDimensions.lg),
         ],
@@ -224,9 +208,7 @@ class _RecipeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: AppDimensions.sm,
-      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: AppDimensions.sm),
       onTap: onTap,
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
@@ -237,7 +219,7 @@ class _RecipeTile extends StatelessWidget {
           width: 56,
           height: 56,
           fit: BoxFit.cover,
-          errorWidget: (_, __, ___) => Container(
+          errorWidget: (_, _, _) => Container(
             width: 56,
             height: 56,
             color: AppColors.gray200,
@@ -262,18 +244,13 @@ class _RecipeTile extends StatelessWidget {
             color: AppColors.gray400,
           ),
           const SizedBox(width: 2),
-          Text(
-            recipe.durationFormatted,
-            style: AppTextStyles.caption,
-          ),
+          Text(recipe.durationFormatted, style: AppTextStyles.caption),
           if (recipe.primaryCategory.isNotEmpty) ...[
             const SizedBox(width: AppDimensions.sm),
             Flexible(
               child: Text(
                 '#${recipe.primaryCategory}',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
-                ),
+                style: AppTextStyles.caption.copyWith(color: AppColors.primary),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
