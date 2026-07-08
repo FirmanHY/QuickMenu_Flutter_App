@@ -26,7 +26,7 @@ class AuthRepository {
 
       if (!cred.user!.emailVerified) {
         await _auth.signOut();
-        throw const AuthException('Email belum diverifikasi. Cek inbox kamu.');
+        throw EmailNotVerifiedException(email);
       }
 
       return cred.user!;

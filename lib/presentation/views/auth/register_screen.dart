@@ -87,28 +87,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _handleRegister() async {
     if (!_validate()) return;
 
-    final success = await ref
+    await ref
         .read(authViewModelProvider.notifier)
         .register(
           _emailCtrl.text.trim(),
           _passwordCtrl.text,
           _nameCtrl.text.trim(),
         );
+    // Sukses/gagal ditangani lewat authState.registrationSuccess &
+    // ref.listen di build() — bukan lagi lewat return value di sini.
+  }
 
-    if (!mounted) return;
-    if (success) {
-      // Kasih tahu user cek email dulu, lalu ke Login
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Registrasi berhasil! Cek email kamu untuk verifikasi akun.',
-          ),
-          backgroundColor: AppColors.success,
-          duration: Duration(seconds: 4),
-        ),
-      );
-      context.go(AppRoutes.login);
-    }
+  void _goToLogin() {
+    ref.read(authViewModelProvider.notifier).dismissRegistrationSuccess();
+    context.go(AppRoutes.login);
   }
 
   @override
@@ -129,6 +121,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ref.read(authViewModelProvider.notifier).clearError();
       }
     });
+
+    if (authState.registrationSuccess) {
+      return _VerifyEmailPendingView(
+        email: authState.pendingVerificationEmail ?? _emailCtrl.text.trim(),
+        onContinue: _goToLogin,
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -260,6 +259,88 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Halaman transisi "Cek Email Kamu" — tampil penuh setelah registrasi
+// berhasil, tidak bisa di-skip lewat gesture back. User wajib menekan
+// tombol untuk lanjut ke Login.
+// ─────────────────────────────────────────────────────────────────────────────
+class _VerifyEmailPendingView extends StatelessWidget {
+  final String email;
+  final VoidCallback onContinue;
+
+  const _VerifyEmailPendingView({
+    required this.email,
+    required this.onContinue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.screenHorizontal,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.mark_email_unread_rounded,
+                    size: 48,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Cek Email Kamu',
+                  style: AppTextStyles.h2,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Kami udah kirim link verifikasi ke',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.gray600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  style: AppTextStyles.labelLarge.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Klik link itu buat aktifin akun kamu sebelum login.',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.gray600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                AppButton(title: 'Ke Halaman Login', onPressed: onContinue),
               ],
             ),
           ),

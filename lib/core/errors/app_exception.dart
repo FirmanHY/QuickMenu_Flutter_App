@@ -14,6 +14,12 @@ class AuthException extends AppException {
   const AuthException([super.message = 'Autentikasi gagal']);
 }
 
+class EmailNotVerifiedException extends AuthException {
+  final String email;
+  const EmailNotVerifiedException(this.email)
+    : super('Cek email $email dan klik link verifikasi dulu ya');
+}
+
 class NotFoundException extends AppException {
   const NotFoundException([super.message = 'Data tidak ditemukan']);
 }

@@ -16,22 +16,32 @@ final authStateProvider = StreamProvider<User?>(
 class AuthState {
   final bool isLoading;
   final String? errorMessage;
-  final bool registrationSuccess; // untuk trigger snackbar di Register screen
+  final bool isEmailNotVerifiedError;
+  final bool
+  registrationSuccess; // trigger halaman "cek email" di Register screen
+  final String? pendingVerificationEmail;
 
   const AuthState({
     this.isLoading = false,
     this.errorMessage,
+    this.isEmailNotVerifiedError = false,
     this.registrationSuccess = false,
+    this.pendingVerificationEmail,
   });
 
   AuthState copyWith({
     bool? isLoading,
     String? errorMessage,
+    bool isEmailNotVerifiedError = false,
     bool? registrationSuccess,
+    String? pendingVerificationEmail,
   }) => AuthState(
     isLoading: isLoading ?? this.isLoading,
     errorMessage: errorMessage, // null = clear error
+    isEmailNotVerifiedError: isEmailNotVerifiedError,
     registrationSuccess: registrationSuccess ?? this.registrationSuccess,
+    pendingVerificationEmail:
+        pendingVerificationEmail ?? this.pendingVerificationEmail,
   );
 }
 
@@ -49,7 +59,11 @@ class AuthViewModel extends Notifier<AuthState> {
       state = state.copyWith(isLoading: false);
       return true;
     } on AppException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.message,
+        isEmailNotVerifiedError: e is EmailNotVerifiedException,
+      );
       return false;
     }
   }
@@ -62,7 +76,11 @@ class AuthViewModel extends Notifier<AuthState> {
     );
     try {
       await _repo.registerWithEmail(email.trim(), password, name.trim());
-      state = state.copyWith(isLoading: false, registrationSuccess: true);
+      state = state.copyWith(
+        isLoading: false,
+        registrationSuccess: true,
+        pendingVerificationEmail: email.trim(),
+      );
       return true;
     } on AppException catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.message);
@@ -75,7 +93,13 @@ class AuthViewModel extends Notifier<AuthState> {
     state = const AuthState();
   }
 
-  void clearError() => state = state.copyWith(errorMessage: null);
+  void clearError() => state = state.copyWith(
+    errorMessage: null,
+    isEmailNotVerifiedError: false,
+  );
+
+  void dismissRegistrationSuccess() =>
+      state = state.copyWith(registrationSuccess: false);
 }
 
 final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(

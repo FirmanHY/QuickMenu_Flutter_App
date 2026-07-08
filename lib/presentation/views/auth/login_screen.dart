@@ -73,14 +73,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen(authViewModelProvider, (prev, next) {
       if (next.errorMessage != null &&
           next.errorMessage != prev?.errorMessage) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(next.errorMessage!),
-              backgroundColor: AppColors.error,
-            ),
-          );
+        if (next.isEmailNotVerifiedError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 5),
+                backgroundColor: AppColors.warning,
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '⚠️ Akun kamu belum diverifikasi',
+                      style: AppTextStyles.labelMedium.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      next.errorMessage!,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+        } else {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(next.errorMessage!),
+                backgroundColor: AppColors.error,
+              ),
+            );
+        }
         ref.read(authViewModelProvider.notifier).clearError();
       }
     });
