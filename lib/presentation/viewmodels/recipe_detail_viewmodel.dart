@@ -19,6 +19,14 @@ class RecipeDetailState {
   final String? errorMessage;
   final String? successMessage;
 
+  // ── Info jadwal terakhir yang berhasil disimpan ──────────────────────────
+  // `scheduleEventId` dipakai (bukan compare string) supaya listener di View
+  // tetap ke-trigger walau user menjadwalkan resep lain ke tanggal & slot
+  // yang persis sama dua kali berturut-turut.
+  final DateTime? scheduledDate;
+  final MealType? scheduledMealType;
+  final int scheduleEventId;
+
   const RecipeDetailState({
     this.recipe,
     this.isLoading = false,
@@ -26,6 +34,9 @@ class RecipeDetailState {
     this.isSavingTags = false,
     this.errorMessage,
     this.successMessage,
+    this.scheduledDate,
+    this.scheduledMealType,
+    this.scheduleEventId = 0,
   });
 
   bool get isQuickMenuSource => recipe?.source == 'QuickMenu';
@@ -42,6 +53,9 @@ class RecipeDetailState {
     bool clearError = false,
     String? successMessage,
     bool clearSuccess = false,
+    DateTime? scheduledDate,
+    MealType? scheduledMealType,
+    int? scheduleEventId,
   }) => RecipeDetailState(
     recipe: recipe ?? this.recipe,
     isLoading: isLoading ?? this.isLoading,
@@ -51,6 +65,9 @@ class RecipeDetailState {
     successMessage: clearSuccess
         ? null
         : (successMessage ?? this.successMessage),
+    scheduledDate: scheduledDate ?? this.scheduledDate,
+    scheduledMealType: scheduledMealType ?? this.scheduledMealType,
+    scheduleEventId: scheduleEventId ?? this.scheduleEventId,
   );
 }
 
@@ -187,7 +204,9 @@ class RecipeDetailViewModel extends Notifier<RecipeDetailState> {
 
       state = state.copyWith(
         isSavingSchedule: false,
-        successMessage: 'Jadwal berhasil disimpan',
+        scheduledDate: date,
+        scheduledMealType: mealType,
+        scheduleEventId: state.scheduleEventId + 1,
       );
     } on AppException catch (e) {
       state = state.copyWith(isSavingSchedule: false, errorMessage: e.message);

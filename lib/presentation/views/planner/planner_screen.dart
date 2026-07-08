@@ -31,6 +31,9 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> with RouteAware {
   // and overwriting the optimistic update from addMeal.
   bool _sheetOpen = false;
 
+  // GlobalKey per tanggal — dipakai untuk auto-scroll ke kartu yang di-highlight.
+  final _dayKeys = <String, GlobalKey>{};
+
   @override
   void initState() {
     super.initState();
@@ -180,6 +183,29 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> with RouteAware {
           );
         _vm.clearError();
       }
+
+      // ── Highlight: scroll ke tanggal tujuan setelah reload selesai,
+      // lalu clear highlight otomatis setelah ~2 detik.
+      if (next.highlightDateKey != null &&
+          prev?.isLoading == true &&
+          next.isLoading == false) {
+        final targetKey = next.highlightDateKey;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final key = _dayKeys[targetKey];
+          final ctx = key?.currentContext;
+          if (ctx != null) {
+            Scrollable.ensureVisible(
+              ctx,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+              alignment: 0.1,
+            );
+          }
+        });
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) _vm.clearHighlight();
+        });
+      }
     });
 
     return Scaffold(
@@ -222,12 +248,20 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> with RouteAware {
                       itemCount: state.weeklyPlan.length,
                       itemBuilder: (_, i) {
                         final day = state.weeklyPlan[i];
+                        final key = _dayKeys.putIfAbsent(
+                          day.date,
+                          () => GlobalKey(),
+                        );
                         return DailyMealCard(
+                          key: key,
                           day: day,
                           dateDisplay: _formatDateDisplay(day.date),
                           onAdd: (type) => _onAddMeal(day.date, type),
                           onRemove: (type) => _onRemoveMeal(day.date, type),
                           onPressMeal: _onPressMeal,
+                          highlightMealType: day.date == state.highlightDateKey
+                              ? state.highlightMealType
+                              : null,
                         );
                       },
                     ),

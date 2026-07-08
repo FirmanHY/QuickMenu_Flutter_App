@@ -16,6 +16,9 @@ class DailyMealCard extends StatelessWidget {
   final void Function(MealType type) onAdd;
   final void Function(MealType type) onRemove;
   final void Function(String recipeId)? onPressMeal;
+  // Slot yang baru saja dijadwalkan — dirender dengan style highlight
+  // yang fade otomatis begitu nilai ini kembali null.
+  final MealType? highlightMealType;
 
   const DailyMealCard({
     super.key,
@@ -24,6 +27,7 @@ class DailyMealCard extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.onPressMeal,
+    this.highlightMealType,
   });
 
   @override
@@ -87,6 +91,7 @@ class DailyMealCard extends StatelessWidget {
                   onPress: day.breakfast != null
                       ? () => onPressMeal?.call(day.breakfast!.recipeId)
                       : null,
+                  isHighlighted: highlightMealType == MealType.breakfast,
                 ),
                 const SizedBox(height: AppDimensions.md),
                 _MealRow(
@@ -97,6 +102,7 @@ class DailyMealCard extends StatelessWidget {
                   onPress: day.lunch != null
                       ? () => onPressMeal?.call(day.lunch!.recipeId)
                       : null,
+                  isHighlighted: highlightMealType == MealType.lunch,
                 ),
                 const SizedBox(height: AppDimensions.md),
                 _MealRow(
@@ -107,6 +113,7 @@ class DailyMealCard extends StatelessWidget {
                   onPress: day.dinner != null
                       ? () => onPressMeal?.call(day.dinner!.recipeId)
                       : null,
+                  isHighlighted: highlightMealType == MealType.dinner,
                 ),
               ],
             ),
@@ -127,6 +134,7 @@ class _MealRow extends StatelessWidget {
   final VoidCallback onAdd;
   final VoidCallback onRemove;
   final VoidCallback? onPress;
+  final bool isHighlighted;
 
   const _MealRow({
     required this.type,
@@ -134,6 +142,7 @@ class _MealRow extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.onPress,
+    this.isHighlighted = false,
   });
 
   @override
@@ -154,7 +163,12 @@ class _MealRow extends StatelessWidget {
         // ── Isi slot ──────────────────────────────────────────────────
         Expanded(
           child: meal != null
-              ? _FilledSlot(meal: meal!, onPress: onPress, onRemove: onRemove)
+              ? _FilledSlot(
+                  meal: meal!,
+                  onPress: onPress,
+                  onRemove: onRemove,
+                  isHighlighted: isHighlighted,
+                )
               : _EmptySlot(onAdd: onAdd),
         ),
       ],
@@ -170,22 +184,29 @@ class _FilledSlot extends StatelessWidget {
   final MealItemModel meal;
   final VoidCallback? onPress;
   final VoidCallback onRemove;
+  final bool isHighlighted;
 
   const _FilledSlot({
     required this.meal,
     required this.onPress,
     required this.onRemove,
+    this.isHighlighted = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPress,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
         padding: const EdgeInsets.all(AppDimensions.sm),
         decoration: BoxDecoration(
-          color: AppColors.lime,
-          border: Border.all(color: AppColors.green),
+          color: isHighlighted ? AppColors.primaryLight : AppColors.lime,
+          border: Border.all(
+            color: isHighlighted ? AppColors.primary : AppColors.green,
+            width: isHighlighted ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         ),
         child: Row(

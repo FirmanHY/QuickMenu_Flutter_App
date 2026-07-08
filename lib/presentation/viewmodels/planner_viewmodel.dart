@@ -32,6 +32,13 @@ class PlannerState {
   final String? errorMessage;
   final String? successMessage;
 
+  // ── Highlight sementara — dipakai saat lompat ke tanggal tertentu dari
+  // CTA "Lihat Jadwal" (RecipeDetail) supaya slot yang baru dijadwalkan
+  // langsung kelihatan oleh user. `date` pakai format yyyy-MM-dd, sama
+  // dengan DailyMealPlanModel.date.
+  final String? highlightDateKey;
+  final MealType? highlightMealType;
+
   const PlannerState({
     this.weeklyPlan = const [],
     required this.currentWeekStart,
@@ -40,6 +47,8 @@ class PlannerState {
     this.collectionRecipes = const [],
     this.errorMessage,
     this.successMessage,
+    this.highlightDateKey,
+    this.highlightMealType,
   });
 
   /// Label range minggu aktif, contoh: "Minggu ini (16 – 22 Jun)"
@@ -64,6 +73,9 @@ class PlannerState {
     bool clearError = false,
     String? successMessage,
     bool clearSuccess = false,
+    String? highlightDateKey,
+    MealType? highlightMealType,
+    bool clearHighlight = false,
   }) => PlannerState(
     weeklyPlan: weeklyPlan ?? this.weeklyPlan,
     currentWeekStart: currentWeekStart ?? this.currentWeekStart,
@@ -74,6 +86,12 @@ class PlannerState {
     successMessage: clearSuccess
         ? null
         : (successMessage ?? this.successMessage),
+    highlightDateKey: clearHighlight
+        ? null
+        : (highlightDateKey ?? this.highlightDateKey),
+    highlightMealType: clearHighlight
+        ? null
+        : (highlightMealType ?? this.highlightMealType),
   );
 }
 
@@ -248,6 +266,19 @@ class PlannerViewModel extends Notifier<PlannerState> {
       await loadCurrentWeek();
     }
   }
+
+  // ── Lompat ke tanggal tertentu (dari CTA "Lihat Jadwal") ─────────────────
+
+  void jumpToDate(DateTime date, {MealType? highlightMealType}) {
+    state = state.copyWith(
+      currentWeekStart: _getMonday(date),
+      highlightDateKey: _fmt.format(date),
+      highlightMealType: highlightMealType,
+    );
+    loadCurrentWeek();
+  }
+
+  void clearHighlight() => state = state.copyWith(clearHighlight: true);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 

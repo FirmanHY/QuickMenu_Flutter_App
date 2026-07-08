@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/utils/app_router.dart';
+import '../../viewmodels/planner_viewmodel.dart';
 import '../../viewmodels/recipe_detail_viewmodel.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/edit_tag_bottom_sheet.dart';
@@ -121,6 +123,58 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
 
     // ── Side effects: snackbar ──────────────────────────────────────────────
     ref.listen(recipeDetailViewModelProvider(widget.recipeId), (prev, next) {
+      // Konfirmasi jadwal — dipisah dari successMessage biasa supaya tetap
+      // muncul walau user menjadwalkan resep lain ke tanggal & slot yang sama
+      // dua kali berturut-turut (lihat scheduleEventId di ViewModel).
+      if (next.scheduleEventId > 0 &&
+          next.scheduleEventId != prev?.scheduleEventId) {
+        final date = next.scheduledDate!;
+        final mealType = next.scheduledMealType!;
+        final dateLabel = DateFormat('EEEE, d MMMM', 'id_ID').format(date);
+
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+              margin: const EdgeInsets.all(AppDimensions.lg),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+              ),
+              duration: const Duration(seconds: 6),
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: AppColors.white,
+                    size: AppDimensions.iconMd,
+                  ),
+                  const SizedBox(width: AppDimensions.sm),
+                  Expanded(
+                    child: Text(
+                      'Resep berhasil dijadwalkan untuk $dateLabel',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              action: SnackBarAction(
+                label: 'Lihat Jadwal',
+                textColor: AppColors.white,
+                onPressed: () {
+                  ref
+                      .read(plannerViewModelProvider.notifier)
+                      .jumpToDate(date, highlightMealType: mealType);
+                  context.go(AppRoutes.planner);
+                },
+              ),
+            ),
+          );
+      }
+
       if (next.successMessage != null &&
           next.successMessage != prev?.successMessage) {
         ScaffoldMessenger.of(context)

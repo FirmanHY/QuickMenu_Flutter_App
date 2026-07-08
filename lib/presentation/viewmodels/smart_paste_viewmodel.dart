@@ -21,6 +21,11 @@ final _smartPasteRepositoryProvider = Provider<RecipeRepository>(
 
 enum SmartPasteStatus { input, preview }
 
+// Dipakai kalau parser gak nemu sinyal durasi apapun di teks — field tetap
+// ke-isi (bukan kosong) supaya user gak wajib ngetik dari nol, tapi tetap
+// bisa diedit bebas sebelum simpan.
+const _defaultDurationMinutes = '30';
+
 // ── State ────────────────────────────────────────────────────────────────
 class SmartPasteState {
   final SmartPasteStatus status;
@@ -147,10 +152,13 @@ class SmartPasteViewModel extends Notifier<SmartPasteState> {
     }
 
     final result = SmartPasteParser.parse(state.rawText);
+    final durationGuess =
+        result.durationMinutesGuess?.toString() ?? _defaultDurationMinutes;
 
     state = state.copyWith(
       status: SmartPasteStatus.preview,
       title: state.title.isEmpty ? result.titleGuess : state.title,
+      duration: state.duration.isEmpty ? durationGuess : state.duration,
       ingredientsDelta: QuillHtmlConverter.htmlToDelta(result.ingredientsHtml),
       stepsDelta: QuillHtmlConverter.htmlToDelta(result.stepsHtml),
       clearPasteError: true,

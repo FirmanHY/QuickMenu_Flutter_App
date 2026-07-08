@@ -34,6 +34,46 @@ abstract final class SmartPasteParser {
   static final _leadingSymbolRegex = RegExp(r'^[^\w\s]{1,3}\s*', unicode: true);
   static final _numberPrefixRegex = RegExp(r'^\d+\s*[.):]\s*');
 
+  // ── Deteksi durasi masak ──────────────────────────────────────────────────
+  // Prioritas: baris yang eksplisit nyebut "durasi"/"waktu masak"/dst, baru
+  // fallback ke sebutan jam/menit pertama di teks manapun kalau gak ketemu.
+  static final _durationLabelRegex = RegExp(
+    r'(durasi|waktu\s*(memasak|masak)?|total\s*waktu|cooking\s*time|prep\s*time|ready\s*in)',
+    caseSensitive: false,
+  );
+  static final _hourMinuteRegex = RegExp(
+    r'(\d+)\s*jam(?:\s*(\d+)\s*menit)?',
+    caseSensitive: false,
+  );
+  static final _minuteOnlyRegex = RegExp(
+    r'(\d+)\s*(?:menit|mnt)\b',
+    caseSensitive: false,
+  );
+
+  /// Tebak durasi masak dalam menit dari teks mentah. Return null kalau
+  /// gak ketemu sinyal apapun — pemanggil yang tentuin fallback default-nya.
+  static int? guessDurationMinutes(String rawText) {
+    for (final line in rawText.split('\n')) {
+      if (_durationLabelRegex.hasMatch(line)) {
+        final minutes = _parseDurationFromText(line);
+        if (minutes != null) return minutes;
+      }
+    }
+    return _parseDurationFromText(rawText);
+  }
+
+  static int? _parseDurationFromText(String text) {
+    final hourMatch = _hourMinuteRegex.firstMatch(text);
+    if (hourMatch != null) {
+      final hours = int.tryParse(hourMatch.group(1) ?? '') ?? 0;
+      final minutes = int.tryParse(hourMatch.group(2) ?? '') ?? 0;
+      if (hours > 0 || minutes > 0) return hours * 60 + minutes;
+    }
+    final minMatch = _minuteOnlyRegex.firstMatch(text);
+    if (minMatch != null) return int.tryParse(minMatch.group(1) ?? '');
+    return null;
+  }
+
   // Bersihin bullet/emoji di depan baris, baru angka ("1.", "2)", dst).
   // PENTING: ini dipanggil SEBELUM cek _quantityHintRegex, karena baris
   // seperti "- 1 ikat kangkung" gak akan match `^\d+...` kalau bullet-nya
@@ -55,6 +95,7 @@ abstract final class SmartPasteParser {
         titleGuess: '',
         ingredientLines: [],
         stepLines: [],
+        durationMinutesGuess: null,
       );
     }
 
@@ -127,6 +168,7 @@ abstract final class SmartPasteParser {
       titleGuess: titleGuess,
       ingredientLines: ingredientLines,
       stepLines: stepLines,
+      durationMinutesGuess: guessDurationMinutes(rawText),
     );
   }
 
@@ -146,11 +188,13 @@ class SmartPasteResult {
   final String titleGuess;
   final List<String> ingredientLines;
   final List<String> stepLines;
+  final int? durationMinutesGuess;
 
   const SmartPasteResult({
     required this.titleGuess,
     required this.ingredientLines,
     required this.stepLines,
+    required this.durationMinutesGuess,
   });
 
   bool get hasIngredients => ingredientLines.isNotEmpty;
