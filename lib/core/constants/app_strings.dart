@@ -34,6 +34,7 @@ abstract final class AppStrings {
   static const String myCollection = 'Koleksi Saya';
   static const String addRecipe = 'Tambah Resep';
   static const String importFromLink = 'Import dari Link';
+  static const String smartPaste = 'Smart Paste';
   static const String addManual = 'Tambah Manual';
   static const String emptyCollection = 'Koleksi Masih Kosong';
   static const String emptyCollectionSub = 'Mulai tambahkan resep favoritmu';

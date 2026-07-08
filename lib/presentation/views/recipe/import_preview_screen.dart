@@ -7,7 +7,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/utils/app_router.dart';
-import '../../../core/utils/smart_paste_parser.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_input.dart';
 import '../../viewmodels/import_preview_viewmodel.dart';
@@ -122,20 +121,14 @@ class _ImportPreviewScreenState extends ConsumerState<ImportPreviewScreen> {
 
     // ── Error state ──────────────────────────────────────────
     if (state.status == ImportStatus.error && !state.hasData) {
-      final platform = SmartPasteParser.detectPlatform(widget.url);
-      final isUnsupported = platform == 'Instagram' || platform == 'TikTok';
       return _ErrorView(
         message: state.errorMessage ?? 'Terjadi kesalahan',
         url: widget.url,
         onRetry: () => ref
             .read(importPreviewViewModelProvider.notifier)
             .scrapeFromUrl(widget.url),
-        onSmartPaste: isUnsupported
-            ? () => context.pushReplacement(
-                AppRoutes.smartPaste,
-                extra: widget.url,
-              )
-            : null,
+        onSmartPaste: () =>
+            context.pushReplacement(AppRoutes.smartPaste, extra: widget.url),
       );
     }
 
@@ -194,74 +187,101 @@ class _ErrorView extends StatelessWidget {
   final String message;
   final String url;
   final VoidCallback onRetry;
-  final VoidCallback? onSmartPaste; // ← baru
+  final VoidCallback onSmartPaste;
 
   const _ErrorView({
     required this.message,
     required this.url,
     required this.onRetry,
-    this.onSmartPaste,
+    required this.onSmartPaste,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.screenHorizontal,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.link_off_rounded,
-              size: 64,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.screenHorizontal,
+        vertical: AppDimensions.xl,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.link_off_rounded,
+            size: 64,
+            color: AppColors.textSecondary,
+          ),
+          const SizedBox(height: AppDimensions.lg),
+          Text(
+            'Gagal Mengambil Resep',
+            style: AppTextStyles.h2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppDimensions.sm),
+          Text(
+            message,
+            style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
-            const SizedBox(height: AppDimensions.lg),
-            Text(
-              'Gagal Mengambil Resep',
-              style: AppTextStyles.h2,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppDimensions.xs),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.md,
+              vertical: AppDimensions.xs,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              url,
+              style: AppTextStyles.caption.copyWith(color: AppColors.gray400),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: AppDimensions.sm),
-            Text(
-              message,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppDimensions.xl),
+          AppButton(
+            title: 'Coba Lagi',
+            onPressed: onRetry,
+            type: AppButtonType.outline,
+          ),
+          const SizedBox(height: AppDimensions.lg),
+
+          // ── Smart Paste CTA — selalu tampil di setiap kegagalan import ──
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppDimensions.md),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
             ),
-            const SizedBox(height: AppDimensions.xs),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.md,
-                vertical: AppDimensions.xs,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                url,
-                style: AppTextStyles.caption.copyWith(color: AppColors.gray400),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(height: AppDimensions.sm),
+                Text(
+                  'Import otomatis gagal? Coba tempel teks resepnya, '
+                  'kami akan bantu proses otomatis',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppDimensions.md),
+                AppButton(title: 'Tempel Teks Resep', onPressed: onSmartPaste),
+              ],
             ),
-            const SizedBox(height: AppDimensions.xl),
-            AppButton(
-              title: 'Coba Lagi',
-              onPressed: onRetry,
-              type: AppButtonType.outline,
-            ),
-            if (onSmartPaste != null) ...[
-              const SizedBox(height: AppDimensions.sm),
-              AppButton(title: 'Pakai Smart Paste', onPressed: onSmartPaste!),
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

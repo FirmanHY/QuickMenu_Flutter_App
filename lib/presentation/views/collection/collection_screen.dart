@@ -106,6 +106,13 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
             ref.read(recipeViewModelProvider.notifier).loadUserData();
           }
         },
+        onSmartPaste: () async {
+          Navigator.pop(context);
+          await context.push(AppRoutes.smartPaste);
+          if (mounted) {
+            ref.read(recipeViewModelProvider.notifier).loadUserData();
+          }
+        },
         onCancel: () => Navigator.pop(context),
       ),
     );
@@ -459,11 +466,13 @@ class _SourceBadge extends StatelessWidget {
 class _AddRecipeBottomSheet extends StatelessWidget {
   final VoidCallback onAddManual;
   final VoidCallback onImportLink;
+  final VoidCallback onSmartPaste;
   final VoidCallback onCancel;
 
   const _AddRecipeBottomSheet({
     required this.onAddManual,
     required this.onImportLink,
+    required this.onSmartPaste,
     required this.onCancel,
   });
 
@@ -498,12 +507,22 @@ class _AddRecipeBottomSheet extends StatelessWidget {
           _SheetOptionButton(
             icon: Icons.link_rounded,
             label: AppStrings.importFromLink,
+            description: 'Tempel link resep, kami ambil detailnya otomatis',
             onTap: onImportLink,
+          ),
+          const SizedBox(height: AppDimensions.md),
+          _SheetOptionButton(
+            icon: Icons.auto_awesome_rounded,
+            label: AppStrings.smartPaste,
+            description:
+                'Dari Instagram/TikTok? Tempel caption-nya, kami bantu deteksi',
+            onTap: onSmartPaste,
           ),
           const SizedBox(height: AppDimensions.md),
           _SheetOptionButton(
             icon: Icons.edit_outlined,
             label: AppStrings.addManual,
+            description: 'Tulis sendiri bahan dan langkah resepmu',
             onTap: onAddManual,
           ),
           const SizedBox(height: AppDimensions.xl),
@@ -535,11 +554,13 @@ class _AddRecipeBottomSheet extends StatelessWidget {
 class _SheetOptionButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String description;
   final VoidCallback onTap;
 
   const _SheetOptionButton({
     required this.icon,
     required this.label,
+    required this.description,
     required this.onTap,
   });
 
@@ -549,10 +570,7 @@ class _SheetOptionButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.xl,
-          vertical: AppDimensions.lg,
-        ),
+        padding: const EdgeInsets.all(AppDimensions.md),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
@@ -560,16 +578,40 @@ class _SheetOptionButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.primary, size: AppDimensions.iconXl),
-            const SizedBox(width: AppDimensions.lg),
-            Expanded(
-              child: Text(
-                label,
-                style: AppTextStyles.labelLarge.copyWith(
-                  color: AppColors.primary,
-                ),
+            Container(
+              padding: const EdgeInsets.all(AppDimensions.sm),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+              ),
+              child: Icon(
+                icon,
+                color: AppColors.primary,
+                size: AppDimensions.iconXl,
               ),
             ),
+            const SizedBox(width: AppDimensions.lg),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: AppTextStyles.labelLarge.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.gray400),
           ],
         ),
       ),
