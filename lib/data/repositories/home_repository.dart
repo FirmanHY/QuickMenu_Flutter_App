@@ -70,7 +70,7 @@ class HomeRepository {
               e.value as Map<dynamic, dynamic>,
             ),
           )
-          .where((r) => r.categories.any((c) => c.toLowerCase() == 'healthy'))
+          .where((r) => r.categories.any((c) => c.toLowerCase() == 'sehat'))
           .map((r) => r.copyWith(isBookmarked: bookmarkedIds.contains(r.id)))
           .toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

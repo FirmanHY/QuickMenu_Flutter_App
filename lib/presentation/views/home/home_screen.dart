@@ -8,6 +8,7 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/utils/app_router.dart';
 import '../../../presentation/viewmodels/auth_viewmodel.dart';
 import '../../../presentation/viewmodels/home_viewmodel.dart';
+import '../../../shared/widgets/add_recipe_options_sheet.dart';
 import '../../../shared/widgets/daily_menu_card.dart';
 import '../../../shared/widgets/recipe_card.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -68,6 +69,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     await ref
         .read(homeViewModelProvider.notifier)
         .loadHomeData(isRefresh: true);
+  }
+
+  void _showAddRecipeSheet() {
+    AddRecipeOptionsSheet.show(
+      context: context,
+      onAddManual: () async {
+        Navigator.pop(context);
+        await context.push(AppRoutes.addManual);
+        if (mounted) {
+          ref.read(homeViewModelProvider.notifier).loadHomeData();
+        }
+      },
+      onImportLink: () async {
+        Navigator.pop(context);
+        await context.push(AppRoutes.importUrl);
+        if (mounted) {
+          ref.read(homeViewModelProvider.notifier).loadHomeData();
+        }
+      },
+      onSmartPaste: () async {
+        Navigator.pop(context);
+        await context.push(AppRoutes.smartPaste);
+        if (mounted) {
+          ref.read(homeViewModelProvider.notifier).loadHomeData();
+        }
+      },
+    );
   }
 
   @override
@@ -202,6 +230,82 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
               ),
+
+              // ── Section Header: Resep Terbaru ────────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.screenHorizontal,
+                    AppDimensions.xxxl,
+                    AppDimensions.screenHorizontal,
+                    AppDimensions.md,
+                  ),
+                  child: Text('Resep Terbaru', style: AppTextStyles.h3),
+                ),
+              ),
+
+              // ── Resep Terbaru: list / empty state CTA ────────────
+              if (!homeState.isLoading && homeState.recentRecipes.isEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.screenHorizontal,
+                    ),
+                    child: EmptyState(
+                      icon: Icons.menu_book_rounded,
+                      title: 'Belum ada resep',
+                      subtitle: 'Yuk tambah yang pertama!',
+                      iconContainerSize: 64,
+                      iconSize: 32,
+                      action: EmptyStateAction(
+                        label: 'Tambah Resep',
+                        icon: Icons.add_rounded,
+                        onPressed: _showAddRecipeSheet,
+                      ),
+                    ),
+                  ),
+                )
+              else if (homeState.isLoading)
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 180,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 190,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.screenHorizontal,
+                      ),
+                      itemCount: homeState.recentRecipes.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(width: AppDimensions.md),
+                      itemBuilder: (context, index) {
+                        final recipe = homeState.recentRecipes[index];
+                        return RecipeCard(
+                          imageUrl: recipe.imageUrl ?? '',
+                          title: recipe.title,
+                          duration: recipe.duration,
+                          category: recipe.categories.isNotEmpty
+                              ? '#${recipe.categories.first}'
+                              : null,
+                          variant: RecipeCardVariant.small,
+                          onPress: () => context.push(
+                            AppRoutes.recipeDetailPath(recipe.id),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
 
               // ── Section Header: Resep Sehat ──────────────────────
               SliverToBoxAdapter(

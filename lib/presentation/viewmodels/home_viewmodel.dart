@@ -4,9 +4,14 @@ import '../../core/errors/app_exception.dart';
 import '../../data/models/meal_plan_model.dart';
 import '../../data/models/recipe_model.dart';
 import '../../data/repositories/home_repository.dart';
+import '../../data/repositories/recipe_repository.dart';
 
 final homeRepositoryProvider = Provider<HomeRepository>(
   (ref) => HomeRepository(),
+);
+
+final recipeRepositoryForHomeProvider = Provider<RecipeRepository>(
+  (ref) => RecipeRepository(),
 );
 
 // ── State ─────────────────────────────────────────────────────
@@ -14,6 +19,7 @@ class HomeState {
   final String userName;
   final DailyMealPlanModel? todayPlan;
   final List<RecipeModel> healthyRecipes;
+  final List<RecipeModel> recentRecipes;
   final bool isLoading;
   final bool isRefreshing;
   final String? errorMessage;
@@ -22,6 +28,7 @@ class HomeState {
     this.userName = 'Pengguna',
     this.todayPlan,
     this.healthyRecipes = const [],
+    this.recentRecipes = const [],
     this.isLoading = false,
     this.isRefreshing = false,
     this.errorMessage,
@@ -32,6 +39,7 @@ class HomeState {
     DailyMealPlanModel? todayPlan,
     bool clearTodayPlan = false,
     List<RecipeModel>? healthyRecipes,
+    List<RecipeModel>? recentRecipes,
     bool? isLoading,
     bool? isRefreshing,
     String? errorMessage,
@@ -40,6 +48,7 @@ class HomeState {
     userName: userName ?? this.userName,
     todayPlan: clearTodayPlan ? null : todayPlan ?? this.todayPlan,
     healthyRecipes: healthyRecipes ?? this.healthyRecipes,
+    recentRecipes: recentRecipes ?? this.recentRecipes,
     isLoading: isLoading ?? this.isLoading,
     isRefreshing: isRefreshing ?? this.isRefreshing,
     errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
@@ -52,6 +61,7 @@ class HomeViewModel extends Notifier<HomeState> {
   HomeState build() => const HomeState();
 
   HomeRepository get _repo => ref.read(homeRepositoryProvider);
+  RecipeRepository get _recipeRepo => ref.read(recipeRepositoryForHomeProvider);
 
   Future<void> loadHomeData({bool isRefresh = false}) async {
     if (isRefresh) {
@@ -66,11 +76,21 @@ class HomeViewModel extends Notifier<HomeState> {
         _repo.getTodayMealPlan(),
         _repo.getHealthyRecipes(),
         _repo.getUserFullName(),
+        _recipeRepo.getUserRecipes(),
       ]);
 
       final todayPlan = results[0] as DailyMealPlanModel?;
       final recipes = results[1] as List<RecipeModel>;
       final fullName = results[2] as String?;
+      final userRecipes = results[3] as List<RecipeModel>;
+
+      // Resep terbaru: terakhir ditambah ATAU diedit, ambil 4 teratas.
+      final recent = [...userRecipes]
+        ..sort((a, b) {
+          final at = a.updatedAt ?? a.createdAt;
+          final bt = b.updatedAt ?? b.createdAt;
+          return bt.compareTo(at);
+        });
 
       // Fallback ke displayName dari Firebase Auth
       final authName = ref
@@ -84,6 +104,7 @@ class HomeViewModel extends Notifier<HomeState> {
         todayPlan: todayPlan,
         clearTodayPlan: todayPlan == null,
         healthyRecipes: recipes,
+        recentRecipes: recent.take(4).toList(),
         isLoading: false,
         isRefreshing: false,
       );
