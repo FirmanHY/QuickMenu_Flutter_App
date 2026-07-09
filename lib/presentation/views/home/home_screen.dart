@@ -268,7 +268,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               else if (homeState.isLoading)
                 const SliverToBoxAdapter(
                   child: SizedBox(
-                    height: 180,
+                    height: 226,
                     child: Center(
                       child: CircularProgressIndicator(
                         color: AppColors.primary,
@@ -279,7 +279,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               else
                 SliverToBoxAdapter(
                   child: SizedBox(
-                    height: 190,
+                    height: 226,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(
